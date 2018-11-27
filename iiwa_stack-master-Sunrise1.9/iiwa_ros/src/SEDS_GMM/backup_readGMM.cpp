@@ -1,3 +1,4 @@
+//此备份seds已经全部调通，缺的就是读机器人状态并运行
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <sstream>
@@ -164,8 +165,5 @@ int main()
 	return 0;
 
 }
-
-
-
 
 

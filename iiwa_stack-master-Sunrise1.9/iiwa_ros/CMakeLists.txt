@@ -52,41 +52,13 @@ add_dependencies(${PROJECT_NAME}
 ##########################################add file##############################################################
 
 #####add the readGMM test
-
-add_executable(readGMM src/SEDS_GMM/readGMM.cpp 
-#include/Myadd.h src/Myadd.cpp
-#~/kuka_catkin/src/mathlib/include/*.h
-#~/kuka_catkin/src/mathlib/src/*.cpp
-#~/kuka_catkin/src/seds/include/GMM.h
-#~/kuka_catkin/src/seds/src/GMM.cpp
-#~/kuka_catkin/src/seds/include/GMR.h
-#~/kuka_catkin/src/seds/src/GMR.cpp
- )
-
-#add_library(Myadd include/Myadd.h src/Myadd.cpp)
-
-#add_library(mathlib 
-##${theSourceFiles_math} ${theHeaderFiles_math}
-#~/kuka_catkin/src/mathlib/src/MathLib.cpp
-#~/kuka_catkin/src/mathlib/include/MathLib.h
-#)
-
-#add_library(seds 
-#~/kuka_catkin/src/seds/include/GMR.h
-#~/kuka_catkin/src/seds/src/GMR.cpp
-#~/kuka_catkin/src/seds/include/GMM.h
-#~/kuka_catkin/src/seds/src/GMM.cpp
-#)
-
-target_link_libraries(readGMM 
-				${catkin_LIBRARIES} 
-#				Myadd
-#				mathlib
-#				seds
-		)
+add_executable(readGMM src/SEDS_GMM/readGMM.cpp )
+target_link_libraries(readGMM ${catkin_LIBRARIES} )
 add_dependencies(readGMM iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
-
+add_executable(pt_sj_go_SEDS src/SEDS_GMM/pt_sj_go_SEDS.cpp )
+target_link_libraries(pt_sj_go_SEDS ${catkin_LIBRARIES} )
+add_dependencies(pt_sj_go_SEDS iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
 
 
