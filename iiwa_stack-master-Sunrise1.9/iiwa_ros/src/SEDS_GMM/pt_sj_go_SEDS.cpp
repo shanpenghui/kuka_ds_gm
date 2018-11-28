@@ -47,7 +47,6 @@ void pose_chatterCallback(const geometry_msgs::PoseStamped& msg1)
   msg.pose.orientation.y=msg1.pose.orientation.y;
   msg.pose.orientation.z=msg1.pose.orientation.z;
   msg.pose.orientation.w=msg1.pose.orientation.w;
-
 }
 void pose_iiwa_Callback(const geometry_msgs::PoseStamped& msg1)
 {
@@ -58,6 +57,7 @@ void pose_iiwa_Callback(const geometry_msgs::PoseStamped& msg1)
   pose_go.pose.orientation.y =msg1.pose.orientation.y;
   pose_go.pose.orientation.z =msg1.pose.orientation.z;
   pose_go.pose.orientation.w =msg1.pose.orientation.w;
+  // ROS_INFO("%f", msg1.pose.position.x);
 }
 void wrench_iiwa_callback(const geometry_msgs::WrenchStamped& msg1)
 {
@@ -71,13 +71,12 @@ void wrench_iiwa_callback(const geometry_msgs::WrenchStamped& msg1)
 //ROS_INFO("listener_wrench:%f,%f,%f", msg1.wrench.force.x,msg1.wrench.force.y,msg1.wrench.force.z);
 }
 
-
 int main(int argc, char **argv)
 {
 //ROS初始化
-  ros::init(argc, argv, "pt_sj_go");
+  ros::init(argc, argv, "pt_sj_go_SEDS");
   ros::NodeHandle n;
-  ros::Subscriber pose_sub = n.subscribe("/pose", 100, pose_chatterCallback);
+  ros::Subscriber pose_sub = n.subscribe("/pose", 100, pose_chatterCallback);//要加一个运行包，不断发送姿态命令，这样就不用自己编姿态了
   ros::Publisher pose_command_pub = n.advertise<geometry_msgs::PoseStamped>("/iiwa/command/CartesianPose", 1000);
   ros::ServiceClient client = n.serviceClient<iiwa_msgs::ConfigureSmartServo>("/iiwa/configuration/configureSmartServo");
   ros::Subscriber pose_iiwa_sub = n.subscribe("/iiwa/state/CartesianPose", 1000, pose_iiwa_Callback);
@@ -113,7 +112,6 @@ int main(int argc, char **argv)
       if(!in.is_open())
       {
         std::cout<<"GMM file open fail"<<std::endl;
-        exit(1);
       }
       else
       std::cout<<"GMM The SEDS Model is loaded successfully"<<std::endl;
@@ -166,12 +164,11 @@ int main(int argc, char **argv)
     //   cout << xT[count] << "; ";
     //   }
 
-  //定义第二个目标位置xT_second	
-    for (int i = 0; i < 3; i++)
-      {
-        current_number=x_begin_shuzu[i];
-        xT_second[i]=current_number;
-      }
+  //定义第二个目标位置xT_second	也就是运动最终停止位置
+      xT_second[0]=0.421120645169;
+      xT_second[1]=0.0205836859991;
+      xT_second[2]=0.581226265672;      
+
     // //查看向量传递结果
     // cout << "The xT_second are: ";
     // for (int count = 0; count < 3; count++){
@@ -189,23 +186,29 @@ int main(int argc, char **argv)
     // for (int count = 0; count < 3; count++){
     //   cout << x_endGMM[count] << "; ";
     //   }
-
+    float xx1,xx2,xx3;
 //ROS循环
 while (ros::ok())
   {
   //定义当前位置x
-    // x[0]=pose_go.pose.position.x;
-    // x[1]=pose_go.pose.position.y;
-    // x[2]=pose_go.pose.position.z;
-    //测试用，直接输入是bag中的数据，实际中要输入机器人末端实时位置
-    x[0]=msg.pose.position.x;
-    x[1]=msg.pose.position.y;
-    x[2]=msg.pose.position.z;
-    // //查看向量传递结果
-    // cout << "The x are: ";
-    // for (int count = 0; count < 3; count++){
-    //   cout << x[count] << "; ";
-    //   }
+  
+    xx1=pose_go.pose.position.x;
+    xx2=pose_go.pose.position.y;
+    xx3=pose_go.pose.position.z;
+    x[0]=xx1;
+    x[1]=xx2;
+    x[2]=xx3;
+    // //测试用，直接输入是bag中的数据，实际中要输入机器人末端实时位置
+    // x[0]=msg.pose.position.x;
+    // x[1]=msg.pose.position.y;
+    // x[2]=msg.pose.position.z;
+    //查看向量传递结果
+    cout << "The x are: ";
+    for (int count = 0; count < 3; count++){
+      cout << x[count] << "; ";
+      }
+    cout << "The xx1 are: ";
+    cout << xx1 << "; ";
 
   //基于位置和速度判断seds是否执行结束
     if(pose_comd.pose.position.y-xT[1]<-0.001 && pose_comd.pose.position.z-xT[2]<-0.001)//差值是负数说明还在SEDS范围中
@@ -334,12 +337,12 @@ while (ros::ok())
           pose_go_pub.publish(pose_go);
           force_go_pub.publish(force_go);
         }
-    }
-
+   
     ros::spinOnce();
 
     loop_rate.sleep();
-
+   
+    }
   return 0;
 }
 

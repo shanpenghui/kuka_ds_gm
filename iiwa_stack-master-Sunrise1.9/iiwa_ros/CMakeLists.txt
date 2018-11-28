@@ -60,7 +60,9 @@ add_executable(pt_sj_go_SEDS src/SEDS_GMM/pt_sj_go_SEDS.cpp )
 target_link_libraries(pt_sj_go_SEDS ${catkin_LIBRARIES} )
 add_dependencies(pt_sj_go_SEDS iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
-
+add_executable(pt_sj_go_change src/SEDS_GMM/pt_sj_go_change.cpp )
+target_link_libraries(pt_sj_go_change ${catkin_LIBRARIES} )
+add_dependencies(pt_sj_go_change iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
 ########################################################################################################################
 install(DIRECTORY include/
