@@ -1,8 +1,8 @@
 rosbag for 105 control robot
 
 #########如果roscd执行失败了，记得设置你当前终端下的ROS_PACKAGE_PATH环境变量，设置方法如下：
-$ source ~/catkin_ws/devel/setup.bash
-or$ export ROS_PACKAGE_PATH=~/indigo_workspace/sandbox:$ROS_PACKAGE_PATH
+$ source ~/catkin_ws/devel/setup.bash 或者
+$ export ROS_PACKAGE_PATH=~/indigo_workspace/sandbox:$ROS_PACKAGE_PATH
 $ roscd beginner_tutorials
 source ./devel/setup.bash
 
