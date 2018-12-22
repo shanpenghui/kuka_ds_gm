@@ -1,6 +1,4 @@
-controller_list:
-  - name: fake_arm_controller
-    joints:
+controller_joint_names:
       - iiwa_joint_1
       - iiwa_joint_2
       - iiwa_joint_3
