@@ -10,6 +10,9 @@ source ./devel/setup.bash
 arduino
 rosrun rosserial_python serial_node.py _port:=/dev/ttyUSB0
 
+###########<----matlab---->
+$ cd /usr/local/MATLAB/R2016b/bin
+$ ./matlab # 如果是第一次运行，建议加sudo
 
 ##########<----change bashrc---->
 gedit ~/.bashrc &
@@ -21,8 +24,8 @@ source ~/catkin_ws_iiwa/devel/setup.bash
 source ~/ros_ws/devel/setup.bash
 source ~/iiwa/devel/setup.bash
 
-#export ROS_IP=192.168.168.10
-#export ROS_MASTER_URI=http://$ROS_IP:11311
+export ROS_IP=192.168.168.10
+export ROS_MASTER_URI=http://$ROS_IP:11311
 
 ##########<---ros interface -->
 catkin_make
@@ -96,3 +99,20 @@ wrndi_bs_z_1
 g
 ###方向各三次
 wrndi_bs_x_1
+
+###########--------ndi和git----------------
+#NDI
+#install
+sh NDI_ToolBox_v5-001-017_for_Linux.sh
+#run
+cd opt/NDIToolBox/
+sudo sh Track
+
+#git
+git init
+git add .
+git commit -m "change..."
+###注意在pull和push时要注意是否版本有区别，对于长时间没搞过的，要对比一下在合并：https://blog.csdn.net/zcw4237256/article/details/78542122，对于每天都做的，那就
+git pull
+git push origin master
+git push origin Runiiwa

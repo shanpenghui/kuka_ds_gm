@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_modules
   seds
   mathlib
+  message_filters 
+  geometry_msgs
 )
 
 #add eigen
@@ -23,7 +25,7 @@ add_definitions(${EIGEN_DEFINITIONS})
 catkin_package(
 	INCLUDE_DIRS include
 	LIBRARIES	 ${PROJECT_NAME} 
-	CATKIN_DEPENDS  iiwa_msgs seds mathlib
+	CATKIN_DEPENDS  iiwa_msgs seds mathlib message_filters geometry_msgs
 ) 
 
 
@@ -63,6 +65,10 @@ add_dependencies(pt_sj_go_SEDS iiwa_stack-master-Sunrise1.9_generate_messages_cp
 add_executable(pt_sj_go_change src/SEDS_GMM/pt_sj_go_change.cpp )
 target_link_libraries(pt_sj_go_change ${catkin_LIBRARIES} )
 add_dependencies(pt_sj_go_change iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+
+add_executable(get_all_sensor_in_one src/topic_synchronizer/get_all_sensor_in_one.cpp )
+target_link_libraries(get_all_sensor_in_one ${catkin_LIBRARIES} )
+add_dependencies(get_all_sensor_in_one iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
 ########################################################################################################################
 install(DIRECTORY include/
