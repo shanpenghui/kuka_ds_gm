@@ -70,6 +70,14 @@ add_executable(get_all_sensor_in_one src/topic_synchronizer/get_all_sensor_in_on
 target_link_libraries(get_all_sensor_in_one ${catkin_LIBRARIES} )
 add_dependencies(get_all_sensor_in_one iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
+add_executable(joint_position_for_gazebo src/simulate_in_gazebo/joint_position_for_gazebo.cpp )
+target_link_libraries(joint_position_for_gazebo ${catkin_LIBRARIES} )
+add_dependencies(joint_position_for_gazebo iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+
+add_executable(pt_sj_go_SEDS_for_gazebo src/simulate_in_gazebo/pt_sj_go_SEDS_for_gazebo.cpp )
+target_link_libraries(pt_sj_go_SEDS_for_gazebo ${catkin_LIBRARIES} )
+add_dependencies(pt_sj_go_SEDS_for_gazebo iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+
 ########################################################################################################################
 install(DIRECTORY include/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})

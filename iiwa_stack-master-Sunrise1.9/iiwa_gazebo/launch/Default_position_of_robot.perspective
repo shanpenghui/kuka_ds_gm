@@ -1,0 +1,85 @@
+{
+  "keys": {}, 
+  "groups": {
+    "pluginmanager": {
+      "keys": {
+        "running-plugins": {
+          "type": "repr", 
+          "repr": "{u'rqt_publisher/Publisher': [1]}"
+        }
+      }, 
+      "groups": {
+        "plugin__rqt_publisher__Publisher__2": {
+          "keys": {}, 
+          "groups": {
+            "plugin": {
+              "keys": {
+                "publishers": {
+                  "type": "repr", 
+                  "repr": "u'[]'"
+                }
+              }, 
+              "groups": {}
+            }
+          }
+        }, 
+        "plugin__rqt_publisher__Publisher__1": {
+          "keys": {}, 
+          "groups": {
+            "dock_widget__PublisherWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr", 
+                  "repr": "True"
+                }, 
+                "parent": {
+                  "type": "repr", 
+                  "repr": "None"
+                }, 
+                "dock_widget_title": {
+                  "type": "repr", 
+                  "repr": "u'Message Publisher'"
+                }
+              }, 
+              "groups": {}
+            }, 
+            "plugin": {
+              "keys": {
+                "publishers": {
+                  "type": "repr", 
+                  "repr": "u\"[{'type_name': 'std_msgs/Float64', 'topic_name': '/iiwa/PositionJointInterface_J1_controller/command', 'enabled': False, 'rate': 1.0, 'expressions': {}, 'publisher_id': 0, 'counter': 0}, {'type_name': 'std_msgs/Float64', 'topic_name': '/iiwa/PositionJointInterface_J2_controller/command', 'enabled': False, 'rate': 1.0, 'expressions': {u'/iiwa/PositionJointInterface_J2_controller/command/data': '0.5'}, 'publisher_id': 1, 'counter': 0}, {'type_name': 'std_msgs/Float64', 'topic_name': '/iiwa/PositionJointInterface_J3_controller/command', 'enabled': False, 'rate': 1.0, 'expressions': {}, 'publisher_id': 2, 'counter': 0}, {'type_name': 'std_msgs/Float64', 'topic_name': '/iiwa/PositionJointInterface_J4_controller/command', 'enabled': False, 'rate': 1.0, 'expressions': {u'/iiwa/PositionJointInterface_J4_controller/command/data': '-1.4'}, 'publisher_id': 3, 'counter': 0}, {'type_name': 'std_msgs/Float64', 'topic_name': '/iiwa/PositionJointInterface_J5_controller/command', 'enabled': False, 'rate': 1.0, 'expressions': {}, 'publisher_id': 4, 'counter': 0}, {'type_name': 'std_msgs/Float64', 'topic_name': '/iiwa/PositionJointInterface_J6_controller/command', 'enabled': False, 'rate': 1.0, 'expressions': {u'/iiwa/PositionJointInterface_J6_controller/command/data': '1.25'}, 'publisher_id': 5, 'counter': 0}, {'type_name': 'std_msgs/Float64', 'topic_name': '/iiwa/PositionJointInterface_J7_controller/command', 'enabled': False, 'rate': 1.0, 'expressions': {}, 'publisher_id': 6, 'counter': 0}]\""
+                }
+              }, 
+              "groups": {}
+            }
+          }
+        }
+      }
+    }, 
+    "mainwindow": {
+      "keys": {
+        "geometry": {
+          "type": "repr(QByteArray.hex)", 
+          "repr(QByteArray.hex)": "QtCore.QByteArray('01d9d0cb00010000000000370000002f000006280000022000000041000000550000061e00000216000000000000')", 
+          "pretty-print": "     7 / (   A U       "
+        }, 
+        "state": {
+          "type": "repr(QByteArray.hex)", 
+          "repr(QByteArray.hex)": "QtCore.QByteArray('000000ff00000000fd0000000200000002000005de00000193fc0100000001fb00000058007200710074005f007000750062006c00690073006800650072005f005f005000750062006c00690073006800650072005f005f0031005f005f005000750062006c006900730068006500720057006900640067006500740100000000000005de0000026600ffffff00000003000005de00000193fc0100000001fb00000058007200710074005f007000750062006c00690073006800650072005f005f005000750062006c00690073006800650072005f005f0032005f005f005000750062006c00690073006800650072005700690064006700650074010000026c000002660000000000000000000005de0000000000000004000000040000000800000008fc00000001000000030000000100000036004d0069006e0069006d0069007a006500640044006f0063006b00570069006400670065007400730054006f006f006c0062006100720000000000ffffffff0000000000000000')", 
+          "pretty-print": "                 Xrqt_publisher__Publisher__1__PublisherWidget                   Xrqt_publisher__Publisher__2__PublisherWidget                            6MinimizedDockWidgetsToolbar        "
+        }
+      }, 
+      "groups": {
+        "toolbar_areas": {
+          "keys": {
+            "MinimizedDockWidgetsToolbar": {
+              "type": "repr", 
+              "repr": "8"
+            }
+          }, 
+          "groups": {}
+        }
+      }
+    }
+  }
+}
