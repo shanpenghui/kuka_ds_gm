@@ -151,6 +151,10 @@ int main(int argc, char **argv)
     MathLib::Vector x,xd,xT,xT_second,x_endGMM,x_go; //defining the required variables
     x.Resize(d); //d is the dimensionality of  your model
     xd.Resize(d);
+    xT.Resize(d);
+    xT_second.Resize(d);
+    x_endGMM.Resize(d);
+    x_go.Resize(d);
 
   //定义目标位置xT	
     for (int i = 0; i < 3; i++)

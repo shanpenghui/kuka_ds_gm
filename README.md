@@ -116,3 +116,13 @@ git commit -m "change..."
 git pull
 git push origin master
 git push origin Runiiwa
+
+
+
+
+##gazebo 仿真
+ roslaunch iiwa_gazebo iiwa_gazebo.launch 打开仿真
+  rosrun rqt_gui rqt_gui  设置初始位置
+rostopic echo /iiwa/joint_states 查看关节数据是否准确
+rosrun iiwa_ros joint_position_for_gazebo 运行正逆运动学
+rosrun iiwa_ros pt_sj_go_SEDS_for_gazebo 运行SEDS

@@ -119,9 +119,12 @@ int main(int argc, char **argv)
       std::cout<<"GMM The SEDS Model is loaded successfully"<<std::endl;
 
   //从txt传数据到数组向量
-    std::vector<float> x_begin; std::vector<float> x_end; 
-    std::array<float,3> x_begin_array; std::array<float,3> x_end_array;
-    float x_begin_shuzu[3]; float x_end_shuzu[3];
+    std::vector<float> x_begin;
+    std::vector<float> x_end; 
+    std::array<float,3> x_begin_array; 
+    std::array<float,3> x_end_array;
+    float x_begin_shuzu[3]; 
+    float x_end_shuzu[3];
     std::vector< std::vector<float> > x_position(3, std::vector<float>(0)); 
     float current_number = 0;
     for (int i = 3; i < 6; i++)
@@ -149,29 +152,37 @@ int main(int argc, char **argv)
     in.close();//关闭文件
 
   //运行SEDS模型
-    int d=3;float T=1/256;
+    int d=3;float T=0.0039;
     MathLib::Vector x,xd,xT,xT_second,x_endGMM,x_go; //defining the required variables
     x.Resize(d); //d is the dimensionality of  your model
     xd.Resize(d);
+    xT.Resize(d);
+    xT_second.Resize(d);
+    x_endGMM.Resize(d);
+    x_go.Resize(d);
 
-  //定义目标位置xT	
+  //定义目标位置xT	 
     for (int i = 0; i < 3; i++)
       {
         current_number=x_begin_shuzu[i];
         xT[i]=current_number;
       }
-    // //查看向量传递结果
+      // xT[0]=0.611509;
+      // xT[1]=0.020930;
+      // xT[2]=0.223562;  
+    //查看向量传递结果
     // cout << "The xT are: ";
     // for (int count = 0; count < 3; count++){
     //   cout << xT[count] << "; ";
     //   }
+    //xT.Print("xT = ");
 
   //定义第二个目标位置xT_second	也就是运动最终停止位置
       xT_second[0]=0.421120645169;
       xT_second[1]=0.0205836859991;
       xT_second[2]=0.581226265672;      
 
-    // //查看向量传递结果
+    //查看向量传递结果
     // cout << "The xT_second are: ";
     // for (int count = 0; count < 3; count++){
     //   cout << xT_second[count] << "; ";
@@ -183,7 +194,7 @@ int main(int argc, char **argv)
         current_number=x_end_shuzu[i];
         x_endGMM[i]=current_number;
       }
-    // //查看向量传递结果
+    //查看向量传递结果
     // cout << "The x_endGMM are: ";
     // for (int count = 0; count < 3; count++){
     //   cout << x_endGMM[count] << "; ";
@@ -200,26 +211,40 @@ while (ros::ok())
     x[0]=xx1;
     x[1]=xx2;
     x[2]=xx3;
+    // x[0]=0.57848316431;
+    // x[1]=0.000486766191898;
+    // x[2]=0.471556246281;
     // //测试用，直接输入是bag中的数据，实际中要输入机器人末端实时位置
     // x[0]=msg.pose.position.x;
     // x[1]=msg.pose.position.y;
     // x[2]=msg.pose.position.z;
     //查看向量传递结果
-    
-    cout << "The x are: ";
-    for (int count = 0; count < 3; count++){
-      cout << x[count] << "; ";
-      }
-    cout << "The xx1 are: ";
-    cout << xx1 << "; ";
+
+   // x.Print("xold = ");
+
+    // cout << "The x are: ";
+    // for (int count = 0; count < 3; count++){
+    //   cout << x[count] << "; ";
+    //   }
+
+    //       cout << "The xT are: ";
+    // for (int count = 0; count < 3; count++){
+    //   cout << xT[count] << "; ";
+    //   }
+
+    // cout << "The xx1 are: ";
+    // cout << xx1 << "; ";
 
   //基于位置和速度判断seds是否执行结束
     if(pose_comd.pose.position.y-xT[1]<-0.001 && pose_comd.pose.position.z-xT[2]<-0.001)//差值是负数说明还在SEDS范围中
     {
         if((xd[1]+xd[2]+xd[3])/3>0.0003)//速度较大就说明SEDS没运行完
         {
+          cout << "  first step;  ";
         //运行模型回归
           x -= xT; //Transformation into the target frame of  reference
+          //x.Print("x = ");
+
           mySEDS.doRegression(x,xd);  // Estimating xd at x
           xd.Print("xd = "); //Printing the value of  xd
         //给机器人速度与阻抗命令
@@ -247,12 +272,13 @@ while (ros::ok())
           kz=10;
           set_impedance(config,pt_mode);
           client.call(config);
-          ROS_INFO("%f,%f,%f", kx,ky,kz);
+          // ROS_INFO("%f,%f,%f", kx,ky,kz);
           pose_go_pub.publish(pose_go);
           force_go_pub.publish(force_go);
         }
         else//速度小了说明接近目标了，就可以直接一个命令走到命令位置，这样差值讲接近零而不符合第一个if的判断从而进入GMM
         {
+          cout << "  second step;  ";
           pose_comd.pose.position.x=xT[0];
           pose_comd.pose.position.y=xT[1];
           pose_comd.pose.position.z=xT[2];
@@ -272,7 +298,7 @@ while (ros::ok())
           kz=10;
           set_impedance(config,pt_mode);
           client.call(config);
-          ROS_INFO("%f,%f,%f", kx,ky,kz);
+          //ROS_INFO("%f,%f,%f", kx,ky,kz);
           pose_go_pub.publish(pose_go);
           force_go_pub.publish(force_go);
         }
@@ -281,6 +307,7 @@ while (ros::ok())
           {
             if((pose_comd.pose.position.y-x_endGMM[1])*(pose_comd.pose.position.y-x_endGMM[1])+(pose_comd.pose.position.z-x_endGMM[2])*(pose_comd.pose.position.z-x_endGMM[2])>0.001)//判断与终点的绝对位置
             {
+              cout << "  third step;  ";
               int i=0;
               pose_comd.pose.position.x=x_position[0][i];
               pose_comd.pose.position.y=x_position[1][i];
@@ -302,12 +329,13 @@ while (ros::ok())
               kz=10;
               set_impedance(config,pt_mode);
               client.call(config);
-              ROS_INFO("%f,%f,%f", kx,ky,kz);
+              //ROS_INFO("%f,%f,%f", kx,ky,kz);
               pose_go_pub.publish(pose_go);
               force_go_pub.publish(force_go);
             }
             else//如果接近终点了就直接走到终点
             {
+              cout << "  forth step;  ";
               pose_comd.pose.position.x=x_endGMM[0];
               pose_comd.pose.position.y=x_endGMM[1];
               pose_comd.pose.position.z=x_endGMM[2];
@@ -327,17 +355,18 @@ while (ros::ok())
               kx=30;
               set_impedance(config,pt_mode);
               client.call(config);
-              ROS_INFO("%f,%f,%f", kx,ky,kz);
+              //ROS_INFO("%f,%f,%f", kx,ky,kz);
               pose_go_pub.publish(pose_go);
               force_go_pub.publish(force_go);
             }
           }
         else //走到了GMM终点，于是走第二个seds
         {
+          cout << "  fifth step;  ";
         //运行模型回归
           x -= xT_second; //Transformation into the target frame of  reference
           mySEDS_second.doRegression(x,xd);  // Estimating xd at x
-          xd.Print("xd = "); //Printing the value of  xd
+          //xd.Print("xd = "); //Printing the value of  xd
         //给机器人速度与阻抗命令
           x_go[0]=x[0]+xd[0]*T;
           x_go[1]=x[1]+xd[1]*T;
@@ -362,7 +391,7 @@ while (ros::ok())
           kz=10;
           set_impedance(config,pt_mode);
           client.call(config);
-          ROS_INFO("%f,%f,%f", kx,ky,kz);
+          //ROS_INFO("%f,%f,%f", kx,ky,kz);
           pose_go_pub.publish(pose_go);
           force_go_pub.publish(force_go);
         }
@@ -373,7 +402,7 @@ while (ros::ok())
    
     }
   return 0;
-}
+ }
 
 void set_impedance(iiwa_msgs::ConfigureSmartServo& config1,int& pt)
 {
@@ -396,7 +425,7 @@ void set_impedance(iiwa_msgs::ConfigureSmartServo& config1,int& pt)
   kx= config1.request.mode.cartesian_stiffness.stiffness.x;
   ky= config1.request.mode.cartesian_stiffness.stiffness.y;
   kz= config1.request.mode.cartesian_stiffness.stiffness.z;
-  ROS_INFO("%f,%f,%f", kx,ky,kz);
+  //ROS_INFO("%f,%f,%f", kx,ky,kz);
    }
   else if(pt==2)
 {
@@ -418,7 +447,7 @@ void set_impedance(iiwa_msgs::ConfigureSmartServo& config1,int& pt)
   kx= config1.request.mode.cartesian_stiffness.stiffness.x;
   ky= config1.request.mode.cartesian_stiffness.stiffness.y;
   kz= config1.request.mode.cartesian_stiffness.stiffness.z;
-  ROS_INFO("%f,%f,%f", kx,ky,kz);
+  //ROS_INFO("%f,%f,%f", kx,ky,kz);
 }
   else if(pt==3&&kz>0)
 {

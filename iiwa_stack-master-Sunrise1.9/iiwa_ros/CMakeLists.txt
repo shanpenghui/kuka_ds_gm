@@ -58,6 +58,10 @@ add_executable(readGMM src/SEDS_GMM/readGMM.cpp )
 target_link_libraries(readGMM ${catkin_LIBRARIES} )
 add_dependencies(readGMM iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
+add_executable(readGMM1 src/SEDS_GMM/readGMM1.cpp )
+target_link_libraries(readGMM1 ${catkin_LIBRARIES} )
+add_dependencies(readGMM1 iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+
 add_executable(pt_sj_go_SEDS src/SEDS_GMM/pt_sj_go_SEDS.cpp )
 target_link_libraries(pt_sj_go_SEDS ${catkin_LIBRARIES} )
 add_dependencies(pt_sj_go_SEDS iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
