@@ -108,6 +108,11 @@ sh NDI_ToolBox_v5-001-017_for_Linux.sh
 cd opt/NDIToolBox/
 sudo sh Track
 
+###########--------MYO----------------
+ rosrun ros_myo myo-rawNode.py    打开myo通讯
+ rosrun ros_myo emg_ascii_graph.py   获取肌电信号
+
+
 #git
 git init
 git add .
@@ -120,7 +125,9 @@ git push origin Runiiwa
 
 
 
+
 ##gazebo 仿真
+首先记住要讲gazebo的launch文件中的控制器类型改成关节控制
  roslaunch iiwa_gazebo iiwa_gazebo.launch 打开仿真
   rosrun rqt_gui rqt_gui  设置初始位置
   rqt_plot rqt_plot   画刚度曲线
