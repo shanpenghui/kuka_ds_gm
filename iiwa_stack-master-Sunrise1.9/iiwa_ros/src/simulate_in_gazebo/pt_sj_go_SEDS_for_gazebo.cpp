@@ -5,6 +5,7 @@
 #include <vector>
 #include "iiwaRos.h"
 #include "geometry_msgs/PoseStamped.h"
+#include "geometry_msgs/Pose.h"
 #include "std_msgs/Float64.h"
 #include <fstream>
 #include <string>
@@ -33,6 +34,7 @@ int pt_mode;
 geometry_msgs::PoseStamped msg;
 geometry_msgs::PoseStamped pose_comd;
 geometry_msgs::PoseStamped vol_comd;
+geometry_msgs::Pose stiff_comd;
 geometry_msgs::PoseStamped pose_go;
 geometry_msgs::WrenchStamped force_go;
 std_msgs::Float64 pt_wrench_x;
@@ -80,6 +82,7 @@ int main(int argc, char **argv)
   ros::Subscriber pose_sub = n.subscribe("/pose", 100, pose_chatterCallback);//要加一个运行包，不断发送姿态命令，这样就不用自己编姿态了
   ros::Publisher pose_command_pub = n.advertise<geometry_msgs::PoseStamped>("/iiwa/command/CartesianPose", 1000);
   ros::Publisher vol_command_pub = n.advertise<geometry_msgs::PoseStamped>("/iiwa/command/CartesianVelocity", 1000);
+  ros::Publisher stiff_command_pub = n.advertise<geometry_msgs::Pose>("CartesianStiffness", 1000);
   ros::ServiceClient client = n.serviceClient<iiwa_msgs::ConfigureSmartServo>("/iiwa/configuration/configureSmartServo");
   ros::Subscriber pose_iiwa_sub = n.subscribe("/iiwa/state/CartesianPose", 1000, pose_iiwa_Callback);
   ros::Subscriber wrench_iiwa_sub = n.subscribe("/iiwa/state/CartesianWrench", 1000, wrench_iiwa_callback);
@@ -152,14 +155,15 @@ int main(int argc, char **argv)
     in.close();//关闭文件
 
   //运行SEDS模型
-    int d=3;float T=0.0039;
-    MathLib::Vector x,xd,xT,xT_second,x_endGMM,x_go; //defining the required variables
+    int d=3;float T=1.0/1000.0; int GMMtime=0;int SEDSstage=1;
+    MathLib::Vector x,xd,xT,xT_second,x_endGMM,x_go,x_position_before,xd1,xd2,xd3,xd4,xd5; //defining the required variables
     x.Resize(d); //d is the dimensionality of  your model
-    xd.Resize(d);
+    xd.Resize(d);xd1.Resize(d);xd2.Resize(d);xd3.Resize(d);xd4.Resize(d);xd5.Resize(d);
     xT.Resize(d);
     xT_second.Resize(d);
     x_endGMM.Resize(d);
     x_go.Resize(d);
+    x_position_before.Resize(d);
 
   //定义目标位置xT	 
     for (int i = 0; i < 3; i++)
@@ -167,6 +171,7 @@ int main(int argc, char **argv)
         current_number=x_begin_shuzu[i];
         xT[i]=current_number;
       }
+      x_position_before=xT;
       // xT[0]=0.611509;
       // xT[1]=0.020930;
       // xT[2]=0.223562;  
@@ -236,141 +241,139 @@ while (ros::ok())
     // cout << xx1 << "; ";
 
   //基于位置和速度判断seds是否执行结束
-    if(pose_comd.pose.position.y-xT[1]<-0.001 && pose_comd.pose.position.z-xT[2]<-0.001)//差值是负数说明还在SEDS范围中
-    {
-        if((xd[1]+xd[2]+xd[3])/3>0.0003)//速度较大就说明SEDS没运行完
-        {
-          cout << "  first step;  ";
-        //运行模型回归
-          x -= xT; //Transformation into the target frame of  reference
-          //x.Print("x = ");
 
-          mySEDS.doRegression(x,xd);  // Estimating xd at x
-          xd.Print("xd = "); //Printing the value of  xd
-        //给机器人速度与阻抗命令
-          x_go[0]=x[0]+xd[0]*T;
-          x_go[1]=x[1]+xd[1]*T;
-          x_go[2]=x[2]+xd[2]*T;
-        //传递给publisher
-          pose_comd.pose.position.x=x_go[0];
-          pose_comd.pose.position.y=x_go[1];
-          pose_comd.pose.position.z=x_go[2];
-          pose_comd.pose.orientation.x=msg.pose.orientation.x;
-          pose_comd.pose.orientation.y=msg.pose.orientation.y;
-          pose_comd.pose.orientation.z=msg.pose.orientation.z;
-          pose_comd.pose.orientation.w=msg.pose.orientation.w;
-        //为了仿真设置的速度
-          vol_comd.pose.position.x=xd[0];
-          vol_comd.pose.position.y=xd[1];
-          vol_comd.pose.position.z=xd[2];
-          vol_command_pub.publish(vol_comd);
-        //发送位置与阻抗命令
-          pose_command_pub.publish(pose_comd);
+  
 
-          kx=10;
-          ky=10;
-          kz=10;
-          set_impedance(config,pt_mode);
-          client.call(config);
-          // ROS_INFO("%f,%f,%f", kx,ky,kz);
-          pose_go_pub.publish(pose_go);
-          force_go_pub.publish(force_go);
-        }
-        else//速度小了说明接近目标了，就可以直接一个命令走到命令位置，这样差值讲接近零而不符合第一个if的判断从而进入GMM
-        {
-          cout << "  second step;  ";
-          pose_comd.pose.position.x=xT[0];
-          pose_comd.pose.position.y=xT[1];
-          pose_comd.pose.position.z=xT[2];
-          pose_comd.pose.orientation.x=msg.pose.orientation.x;
-          pose_comd.pose.orientation.y=msg.pose.orientation.y;
-          pose_comd.pose.orientation.z=msg.pose.orientation.z;
-          pose_comd.pose.orientation.w=msg.pose.orientation.w;
+  if (SEDSstage==1)
+  {
+  //如果seds运行未完成，则执行seds
+
+      cout << "  first step; \n ";
+    //运行模型回归
+      x -= xT; //Transformation into the target frame of  reference
+      //x.Print("x = ");
+
+      mySEDS.doRegression(x,xd);  // Estimating xd at x
+      xd.Print("xd = "); //Printing the value of  xd
+    //给机器人速度与阻抗命令
+      x_go[0]=x[0]+xd[0]*T;
+      x_go[1]=x[1]+xd[1]*T;
+      x_go[2]=x[2]+xd[2]*T;
+    //传递给publisher
+      pose_comd.pose.position.x=x_go[0];
+      pose_comd.pose.position.y=x_go[1];
+      pose_comd.pose.position.z=x_go[2];
+      pose_comd.pose.orientation.x=msg.pose.orientation.x;
+      pose_comd.pose.orientation.y=msg.pose.orientation.y;
+      pose_comd.pose.orientation.z=msg.pose.orientation.z;
+      pose_comd.pose.orientation.w=msg.pose.orientation.w;
+    //为了仿真设置的速度
+      vol_comd.pose.position.x=xd[0];
+      vol_comd.pose.position.y=xd[1];
+      vol_comd.pose.position.z=xd[2];
+      vol_command_pub.publish(vol_comd);
+    //发送位置与阻抗命令
+      pose_command_pub.publish(pose_comd);
+
+      kx=10;
+      ky=10;
+      kz=10;
+      set_impedance(config,pt_mode);
+      client.call(config);
+      stiff_comd.position.x=kx;
+      stiff_comd.position.y=ky;
+      stiff_comd.position.z=kz;
+      stiff_command_pub.publish(stiff_comd);
+      // ROS_INFO("%f,%f,%f", kx,ky,kz);
+      pose_go_pub.publish(pose_go);
+      force_go_pub.publish(force_go);
+
+    //对SEDS进行的状态进行判断，
+    //如果距离小于某个值之后，就可以执行位置命令并给SEDSstage加一
+      float xd_mean=sqrt(xd[0]*xd[0])+sqrt(xd[1]*xd[1])+sqrt(xd[2]*xd[2]);
+      cout << " the mean of vol: ";
+      cout << xd_mean << "; \n";
+      if(xd_mean<0.0020)//距离远说明还在SEDS范围中   //sqrt(pose_comd.pose.position.x-xT[0])+sqrt(pose_comd.pose.position.z-xT[2])<-0.0000000001
+      {
+        SEDSstage=2;
+        cout << "  change to second step; \n ";
+      }
+  }
+  
+
+//若走到GMM起始点，就开始GMM
+  if (SEDSstage==2)
+  {
+    cout << "  second step; \n ";
+      if (GMMtime<6099)
+      {
+        GMMtime +=1;
+      }
+      else 
+      {
+        GMMtime==6099;
+      }
+        
+      pose_comd.pose.position.x=x_position[0][GMMtime];
+      pose_comd.pose.position.y=x_position[1][GMMtime];
+      pose_comd.pose.position.z=x_position[2][GMMtime];
+      pose_comd.pose.orientation.x=msg.pose.orientation.x;
+      pose_comd.pose.orientation.y=msg.pose.orientation.y;
+      pose_comd.pose.orientation.z=msg.pose.orientation.z;
+      pose_comd.pose.orientation.w=msg.pose.orientation.w;
+
+      xd2[0]=(x_position[0][GMMtime]-x_position_before[0])/T;
+      xd2[1]=(x_position[1][GMMtime]-x_position_before[1])/T;
+      xd2[2]=(x_position[2][GMMtime]-x_position_before[2])/T;
+      x_position_before[0]=x_position[0][GMMtime];
+      x_position_before[1]=x_position[1][GMMtime];
+      x_position_before[2]=x_position[2][GMMtime];
+      xd2.Print("xd2 = ");
+          
         //为了仿真设置的速度
-          vol_comd.pose.position.x=xd[0];
-          vol_comd.pose.position.y=xd[1];
-          vol_comd.pose.position.z=xd[2];
-          vol_command_pub.publish(vol_comd);
-        //发送位置与阻抗命令
-          pose_command_pub.publish(pose_comd);
-          kx=10;
-          ky=10;
-          kz=10;
-          set_impedance(config,pt_mode);
-          client.call(config);
-          //ROS_INFO("%f,%f,%f", kx,ky,kz);
-          pose_go_pub.publish(pose_go);
-          force_go_pub.publish(force_go);
-        }
-    }
-    else if(pose_comd.pose.position.y-x_endGMM[1]<-0.001 && pose_comd.pose.position.z-x_endGMM[2]<-0.001)//说明此时差值大于-0，001，以走完seds，判断如果没接近GMM终点
-          {
-            if((pose_comd.pose.position.y-x_endGMM[1])*(pose_comd.pose.position.y-x_endGMM[1])+(pose_comd.pose.position.z-x_endGMM[2])*(pose_comd.pose.position.z-x_endGMM[2])>0.001)//判断与终点的绝对位置
-            {
-              cout << "  third step;  ";
-              int i=0;
-              pose_comd.pose.position.x=x_position[0][i];
-              pose_comd.pose.position.y=x_position[1][i];
-              pose_comd.pose.position.z=x_position[2][i];
-              pose_comd.pose.orientation.x=msg.pose.orientation.x;
-              pose_comd.pose.orientation.y=msg.pose.orientation.y;
-              pose_comd.pose.orientation.z=msg.pose.orientation.z;
-              pose_comd.pose.orientation.w=msg.pose.orientation.w;
-              i=i+1;
-            //为了仿真设置的速度
-          vol_comd.pose.position.x=xd[0];
-          vol_comd.pose.position.y=xd[1];
-          vol_comd.pose.position.z=xd[2];
-          vol_command_pub.publish(vol_comd);
-            //发送位置与阻抗命令
-              pose_command_pub.publish(pose_comd);
-              kx=10;
-              ky=10;
-              kz=10;
-              set_impedance(config,pt_mode);
-              client.call(config);
-              //ROS_INFO("%f,%f,%f", kx,ky,kz);
-              pose_go_pub.publish(pose_go);
-              force_go_pub.publish(force_go);
-            }
-            else//如果接近终点了就直接走到终点
-            {
-              cout << "  forth step;  ";
-              pose_comd.pose.position.x=x_endGMM[0];
-              pose_comd.pose.position.y=x_endGMM[1];
-              pose_comd.pose.position.z=x_endGMM[2];
-              pose_comd.pose.orientation.x=msg.pose.orientation.x;
-              pose_comd.pose.orientation.y=msg.pose.orientation.y;
-              pose_comd.pose.orientation.z=msg.pose.orientation.z;
-              pose_comd.pose.orientation.w=msg.pose.orientation.w;
-            //为了仿真设置的速度
-          vol_comd.pose.position.x=xd[0];
-          vol_comd.pose.position.y=xd[1];
-          vol_comd.pose.position.z=xd[2];
-          vol_command_pub.publish(vol_comd);
-            //发送位置与阻抗命令
-              pose_command_pub.publish(pose_comd);
-              kx=30;
-              kx=30;
-              kx=30;
-              set_impedance(config,pt_mode);
-              client.call(config);
-              //ROS_INFO("%f,%f,%f", kx,ky,kz);
-              pose_go_pub.publish(pose_go);
-              force_go_pub.publish(force_go);
-            }
-          }
-        else //走到了GMM终点，于是走第二个seds
-        {
-          cout << "  fifth step;  ";
+        
+      vol_comd.pose.position.x=xd2[0];
+      vol_comd.pose.position.y=xd2[1];
+      vol_comd.pose.position.z=xd2[2];
+      vol_command_pub.publish(vol_comd);
+    //发送位置与阻抗命令
+      pose_command_pub.publish(pose_comd);
+      kx=300;
+      ky=300;
+      kz=300;
+      set_impedance(config,pt_mode);
+      client.call(config);
+      stiff_comd.position.x=kx;
+      stiff_comd.position.y=ky;
+      stiff_comd.position.z=kz;
+      stiff_command_pub.publish(stiff_comd);
+      //ROS_INFO("%f,%f,%f", kx,ky,kz);
+      pose_go_pub.publish(pose_go);
+      force_go_pub.publish(force_go);
+
+      //判断到没到这个点，到了就改状态
+      float xd_mean2=sqrt(xd2[0]*xd2[0])+sqrt(xd2[1]*xd2[1])+sqrt(xd2[2]*xd2[2]);
+      cout << " the mean of vol2: ";
+      cout << xd_mean2 << "; \n";
+      if(xd_mean2<0.000682)//距离远说明还在SEDS范围中   //sqrt(pose_comd.pose.position.x-xT[0])+sqrt(pose_comd.pose.position.z-xT[2])<-0.0000000001
+      {
+        SEDSstage=3;
+        cout << "  change to thrid step;  \n";
+      }
+  }
+
+  
+  if (SEDSstage==3)
+  {
+          cout << "  third step;  \n";
         //运行模型回归
           x -= xT_second; //Transformation into the target frame of  reference
-          mySEDS_second.doRegression(x,xd);  // Estimating xd at x
-          //xd.Print("xd = "); //Printing the value of  xd
+          mySEDS_second.doRegression(x,xd3);  // Estimating xd at x
+          xd3.Print("xd3 = "); //Printing the value of  xd
         //给机器人速度与阻抗命令
-          x_go[0]=x[0]+xd[0]*T;
-          x_go[1]=x[1]+xd[1]*T;
-          x_go[2]=x[2]+xd[2]*T;
+          x_go[0]=x[0]+xd3[0]*T;
+          x_go[1]=x[1]+xd3[1]*T;
+          x_go[2]=x[2]+xd3[2]*T;
         //传递给publisher
           pose_comd.pose.position.x=x_go[0];
           pose_comd.pose.position.y=x_go[1];
@@ -380,9 +383,9 @@ while (ros::ok())
           pose_comd.pose.orientation.z=msg.pose.orientation.z;
           pose_comd.pose.orientation.w=msg.pose.orientation.w;
        //为了仿真设置的速度
-          vol_comd.pose.position.x=xd[0];
-          vol_comd.pose.position.y=xd[1];
-          vol_comd.pose.position.z=xd[2];
+          vol_comd.pose.position.x=xd3[0];
+          vol_comd.pose.position.y=xd3[1];
+          vol_comd.pose.position.z=xd3[2];
           vol_command_pub.publish(vol_comd);
         //发送位置与阻抗命令
           pose_command_pub.publish(pose_comd);
@@ -391,10 +394,28 @@ while (ros::ok())
           kz=10;
           set_impedance(config,pt_mode);
           client.call(config);
+          stiff_comd.position.x=kx;
+          stiff_comd.position.y=ky;
+          stiff_comd.position.z=kz;
+          stiff_command_pub.publish(stiff_comd);
           //ROS_INFO("%f,%f,%f", kx,ky,kz);
           pose_go_pub.publish(pose_go);
           force_go_pub.publish(force_go);
-        }
+
+                    //判断到没到这个点，到了就改状态
+      float xd_mean3=sqrt(xd3[0]*xd3[0])+sqrt(xd3[1]*xd3[1])+sqrt(xd3[2]*xd3[2]);
+      cout << " the mean of vol3: ";
+      cout << xd_mean3 << "; \n";
+      if(xd_mean3<0.000682)//距离远说明还在SEDS范围中   //sqrt(pose_comd.pose.position.x-xT[0])+sqrt(pose_comd.pose.position.z-xT[2])<-0.0000000001
+      {
+        SEDSstage=4;
+      }
+  }
+  
+  if (SEDSstage==4)   
+  {
+    cout << "  finish the task!  \n";
+  }  
    
     ros::spinOnce();
 

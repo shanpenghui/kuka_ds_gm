@@ -147,7 +147,7 @@ int main(int argc, char **argv)
     in.close();//关闭文件
 
   //运行SEDS模型
-    int d=3;float T=1/256;
+    int d=3;float T=0.0039;
     MathLib::Vector x,xd,xT,xT_second,x_endGMM,x_go; //defining the required variables
     x.Resize(d); //d is the dimensionality of  your model
     xd.Resize(d);
@@ -219,6 +219,7 @@ while (ros::ok())
     {
         if((xd[1]+xd[2]+xd[3])/3>0.0003)//速度较大就说明SEDS没运行完
         {
+          cout << "  first step;  ";
         //运行模型回归
           x -= xT; //Transformation into the target frame of  reference
           mySEDS.doRegression(x,xd);  // Estimating xd at x
@@ -242,12 +243,13 @@ while (ros::ok())
           kz=10;
           set_impedance(config,pt_mode);
           client.call(config);
-          ROS_INFO("%f,%f,%f", kx,ky,kz);
+          //ROS_INFO("%f,%f,%f", kx,ky,kz);
           pose_go_pub.publish(pose_go);
           force_go_pub.publish(force_go);
         }
         else//速度小了说明接近目标了，就可以直接一个命令走到命令位置，这样差值讲接近零而不符合第一个if的判断从而进入GMM
         {
+          cout << "  second step;  ";
           pose_comd.pose.position.x=xT[0];
           pose_comd.pose.position.y=xT[1];
           pose_comd.pose.position.z=xT[2];
@@ -262,7 +264,7 @@ while (ros::ok())
           kz=10;
           set_impedance(config,pt_mode);
           client.call(config);
-          ROS_INFO("%f,%f,%f", kx,ky,kz);
+          //ROS_INFO("%f,%f,%f", kx,ky,kz);
           pose_go_pub.publish(pose_go);
           force_go_pub.publish(force_go);
         }
@@ -271,6 +273,7 @@ while (ros::ok())
           {
             if((pose_comd.pose.position.y-x_endGMM[1])*(pose_comd.pose.position.y-x_endGMM[1])+(pose_comd.pose.position.z-x_endGMM[2])*(pose_comd.pose.position.z-x_endGMM[2])>0.001)//判断与终点的绝对位置
             {
+              cout << "  third step;  ";
               int i=0;
               pose_comd.pose.position.x=x_position[0][i];
               pose_comd.pose.position.y=x_position[1][i];
@@ -287,12 +290,13 @@ while (ros::ok())
               kz=10;
               set_impedance(config,pt_mode);
               client.call(config);
-              ROS_INFO("%f,%f,%f", kx,ky,kz);
+              //ROS_INFO("%f,%f,%f", kx,ky,kz);
               pose_go_pub.publish(pose_go);
               force_go_pub.publish(force_go);
             }
             else//如果接近终点了就直接走到终点
             {
+              cout << "  forth step;  ";
               pose_comd.pose.position.x=x_endGMM[0];
               pose_comd.pose.position.y=x_endGMM[1];
               pose_comd.pose.position.z=x_endGMM[2];
@@ -307,13 +311,14 @@ while (ros::ok())
               kx=30;
               set_impedance(config,pt_mode);
               client.call(config);
-              ROS_INFO("%f,%f,%f", kx,ky,kz);
+              //ROS_INFO("%f,%f,%f", kx,ky,kz);
               pose_go_pub.publish(pose_go);
               force_go_pub.publish(force_go);
             }
           }
         else //走到了GMM终点，于是走第二个seds
         {
+           cout << "  fifth step;  ";
         //运行模型回归
           x -= xT_second; //Transformation into the target frame of  reference
           mySEDS_second.doRegression(x,xd);  // Estimating xd at x
@@ -337,7 +342,7 @@ while (ros::ok())
           kz=10;
           set_impedance(config,pt_mode);
           client.call(config);
-          ROS_INFO("%f,%f,%f", kx,ky,kz);
+          //ROS_INFO("%f,%f,%f", kx,ky,kz);
           pose_go_pub.publish(pose_go);
           force_go_pub.publish(force_go);
         }
@@ -393,7 +398,7 @@ void set_impedance(iiwa_msgs::ConfigureSmartServo& config1,int& pt)
   kx= config1.request.mode.cartesian_stiffness.stiffness.x;
   ky= config1.request.mode.cartesian_stiffness.stiffness.y;
   kz= config1.request.mode.cartesian_stiffness.stiffness.z;
-  ROS_INFO("%f,%f,%f", kx,ky,kz);
+  //ROS_INFO("%f,%f,%f", kx,ky,kz);
 }
   else if(pt==3&&kz>0)
 {
