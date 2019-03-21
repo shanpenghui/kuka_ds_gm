@@ -128,7 +128,7 @@ git push origin Runiiwa
 
 
 
-##gazebo 仿真
+##gazebo 仿真---------------------------------------
 首先记住要讲gazebo的launch文件中的控制器类型改成关节控制
  roslaunch iiwa_gazebo iiwa_gazebo.launch 打开仿真
 

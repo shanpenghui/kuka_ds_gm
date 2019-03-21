@@ -123,7 +123,11 @@ git push origin master
 git push origin Runiiwa
 
 ####注意只同步SRC文件夹中内容用上面命令，整个文件夹就直接push到master
-
+####标准做法
+git status // 查看版本库的状态
+git add .|[file you want add like README.md] // 添加修改的文件进入版本库
+git commit -m "the content of your modify" // 提交版本库
+git push -u origin master // 上传到远程版本库
 
 
 
