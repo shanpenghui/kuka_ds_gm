@@ -18,9 +18,9 @@ int main(int argc, char **argv)
   {
     geometry_msgs::PoseStamped msg;
 
-    msg.pose.position.x=0.50;///2d实验初始点是42
-    msg.pose.position.y=0.02;
-    msg.pose.position.z=0.5;
+    msg.pose.position.x=0.40;///2d实验初始点是42
+    msg.pose.position.y=-0.12;
+    msg.pose.position.z=0.45;
 
     msg.pose.orientation.x=2.24082595912e-05;
     msg.pose.orientation.y=0.999999463558;

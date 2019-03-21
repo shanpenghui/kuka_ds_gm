@@ -113,7 +113,7 @@ sudo sh Track
  rosrun ros_myo emg_ascii_graph.py   获取肌电信号
 
 
-#git
+#git-------------------------------------------
 git init
 git add .
 git commit -m "change..."
@@ -122,15 +122,28 @@ git pull
 git push origin master
 git push origin Runiiwa
 
+####注意只同步SRC文件夹中内容用上面命令，整个文件夹就直接push到master
 
 
 
 
-##gazebo 仿真
+
+##gazebo 仿真---------------------------------------
 首先记住要讲gazebo的launch文件中的控制器类型改成关节控制
  roslaunch iiwa_gazebo iiwa_gazebo.launch 打开仿真
-  rosrun rqt_gui rqt_gui  设置初始位置
+
+  rosrun rqt_gui rqt_gui  设置初始位置 每个关节：
+/iiwa/PositionJointInterface_J1_controller/command
+配置文件保存在iiwa_gazebo/launch文件夹下
+
   rqt_plot rqt_plot   画刚度曲线
 rostopic echo /iiwa/joint_states 查看关节数据是否准确
 rosrun iiwa_ros joint_position_for_gazebo 运行正逆运动学并发送关节指令
 rosrun iiwa_ros pt_sj_go_SEDS_for_gazebo 运行SEDS
+
+##SEDS_GMM调试
+运行程序：rosrun iiwa_ros wr_SEDS_GMM.cpp
+打开画图程序 rqt
+画位置和刚度曲线：/iiwa/state/CartesianPose/pose/position/xyz和/pose_go/pose/position/xyz进行对比分析
+配置保存在iiwa_ros/src/SEDS_GMM中
+

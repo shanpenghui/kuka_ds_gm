@@ -68,9 +68,9 @@ int main(int argc, char **argv)
   iiwa_msgs::ConfigureSmartServo config;
   ros::Rate loop_rate(256);
   pt_mode=3;
-  ifstream kx_in("/home/edward/kuka_ws/K/kx.txt");
-  ifstream ky_in("/home/edward/kuka_ws/K/ky.txt");
-  ifstream kz_in("/home/edward/kuka_ws/K/kz.txt");
+  ifstream kx_in("/home/edward/kuka_catkin/K/kx.txt");
+  ifstream ky_in("/home/edward/kuka_catkin/K/ky.txt");
+  ifstream kz_in("/home/edward/kuka_catkin/K/kz.txt");
   if(pt_mode!=3)
     {
     set_impedance(config,pt_mode);

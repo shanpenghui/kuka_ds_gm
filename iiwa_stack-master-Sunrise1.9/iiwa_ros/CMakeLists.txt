@@ -54,6 +54,9 @@ add_dependencies(${PROJECT_NAME}
 ##########################################add file##############################################################
 
 #####add the readGMM test
+
+###src/SEDS_GMM
+
 add_executable(readGMM src/SEDS_GMM/readGMM.cpp )
 target_link_libraries(readGMM ${catkin_LIBRARIES} )
 add_dependencies(readGMM iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
@@ -70,9 +73,20 @@ add_executable(pt_sj_go_change src/SEDS_GMM/pt_sj_go_change.cpp )
 target_link_libraries(pt_sj_go_change ${catkin_LIBRARIES} )
 add_dependencies(pt_sj_go_change iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
+add_executable(wr_SEDS_GMM src/SEDS_GMM/wr_SEDS_GMM.cpp )
+target_link_libraries(wr_SEDS_GMM ${catkin_LIBRARIES} )
+add_dependencies(wr_SEDS_GMM iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+
+
+
+###src/topic_synchronizer
+
 add_executable(get_all_sensor_in_one src/topic_synchronizer/get_all_sensor_in_one.cpp )
 target_link_libraries(get_all_sensor_in_one ${catkin_LIBRARIES} )
 add_dependencies(get_all_sensor_in_one iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+
+
+####src/simulate_in_gazebo
 
 add_executable(joint_position_for_gazebo src/simulate_in_gazebo/joint_position_for_gazebo.cpp )
 target_link_libraries(joint_position_for_gazebo ${catkin_LIBRARIES} )
@@ -81,6 +95,8 @@ add_dependencies(joint_position_for_gazebo iiwa_stack-master-Sunrise1.9_generate
 add_executable(pt_sj_go_SEDS_for_gazebo src/simulate_in_gazebo/pt_sj_go_SEDS_for_gazebo.cpp )
 target_link_libraries(pt_sj_go_SEDS_for_gazebo ${catkin_LIBRARIES} )
 add_dependencies(pt_sj_go_SEDS_for_gazebo iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+
+
 
 ########################################################################################################################
 install(DIRECTORY include/
@@ -120,9 +136,9 @@ install(DIRECTORY include/
 #target_link_libraries(pt_listener ${catkin_LIBRARIES})
 #add_dependencies(pt_listener iiwa_stack-master-Sunrise1.9_generate_messages_cpp)
 
-#add_executable(pt_start src/pt_start.cpp)
-#target_link_libraries(pt_start ${catkin_LIBRARIES})
-#add_dependencies(pt_start iiwa_stack-master-Sunrise1.9_generate_messages_cpp)
+add_executable(pt_start src/old_pt/pt_start.cpp)
+target_link_libraries(pt_start ${catkin_LIBRARIES})
+add_dependencies(pt_start iiwa_stack-master-Sunrise1.9_generate_messages_cpp)
 
 #add_executable(pt_client src/pt_client.cpp)
 #target_link_libraries(pt_client ${catkin_LIBRARIES})
@@ -180,9 +196,9 @@ install(DIRECTORY include/
 #target_link_libraries(read_save_X ${catkin_LIBRARIES})
 #add_dependencies(read_save_X iiwa_stack-master-Sunrise1.9_generate_messages_cpp)
 
-#add_executable(pt_sj_go src/pt_sj_go.cpp)
-#target_link_libraries(pt_sj_go ${catkin_LIBRARIES})
-#add_dependencies(pt_sj_go iiwa_stack-master-Sunrise1.9_generate_messages_cpp)
+add_executable(pt_sj_go src/old_pt/pt_sj_go.cpp)
+target_link_libraries(pt_sj_go ${catkin_LIBRARIES})
+add_dependencies(pt_sj_go iiwa_stack-master-Sunrise1.9_generate_messages_cpp)
 
 
 
@@ -215,9 +231,9 @@ install(DIRECTORY include/
 #target_link_libraries(pt_admittance_add_force ${catkin_LIBRARIES})
 #add_dependencies(pt_admittance_add_force iiwa_stack-master-Sunrise1.9_generate_messages_cpp)
 
-#add_executable(pt_admittance_add_force_2d src/qq/pt_admittance_add_force_2d.cpp)
-#target_link_libraries(pt_admittance_add_force_2d ${catkin_LIBRARIES})
-#add_dependencies(pt_admittance_add_force_2d iiwa_stack-master-Sunrise1.9_generate_messages_cpp)
+add_executable(pt_admittance_add_force_2d src/qq/pt_admittance_add_force_2d.cpp)
+target_link_libraries(pt_admittance_add_force_2d ${catkin_LIBRARIES})
+add_dependencies(pt_admittance_add_force_2d iiwa_stack-master-Sunrise1.9_generate_messages_cpp)
 
 #add_executable(pt_zq1 src/qq/pt_zq1.cpp)
 #target_link_libraries(pt_zq1 ${catkin_LIBRARIES})
