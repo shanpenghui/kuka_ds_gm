@@ -78,6 +78,9 @@ target_link_libraries(wr_SEDS_GMM ${catkin_LIBRARIES} )
 add_dependencies(wr_SEDS_GMM iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
 
+add_executable(wr_SEDS_GMM_only_position src/SEDS_GMM/wr_SEDS_GMM_only_position.cpp )
+target_link_libraries(wr_SEDS_GMM_only_position ${catkin_LIBRARIES} )
+add_dependencies(wr_SEDS_GMM_only_position iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
 ###src/topic_synchronizer
 

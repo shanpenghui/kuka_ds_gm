@@ -113,7 +113,7 @@ sudo sh Track
  rosrun ros_myo emg_ascii_graph.py   获取肌电信号
 
 
-#git-------------------------------------------
+###############git-------------------------------------------
 git init
 git add .
 git commit -m "change..."
@@ -123,12 +123,16 @@ git push origin master
 git push origin Runiiwa
 
 ####注意只同步SRC文件夹中内容用上面命令，整个文件夹就直接push到master
+####标准做法
+git status // 查看版本库的状态
+git add .|[file you want add like README.md] // 添加修改的文件进入版本库
+git commit -m "the content of your modify" // 提交版本库
+git push -u origin master // 上传到远程版本库
 
 
 
 
-
-##gazebo 仿真---------------------------------------
+##############gazebo 仿真---------------------------------------
 首先记住要讲gazebo的launch文件中的控制器类型改成关节控制
  roslaunch iiwa_gazebo iiwa_gazebo.launch 打开仿真
 
@@ -141,9 +145,21 @@ rostopic echo /iiwa/joint_states 查看关节数据是否准确
 rosrun iiwa_ros joint_position_for_gazebo 运行正逆运动学并发送关节指令
 rosrun iiwa_ros pt_sj_go_SEDS_for_gazebo 运行SEDS
 
-##SEDS_GMM调试
+###############SEDS_GMM调试    最后rqt不能显示pose_go，所以用话题报记录之后用MATLAB处理,并git保存在kuka_ds_gm和5_wr_SEDS_GMM中
 运行程序：rosrun iiwa_ros wr_SEDS_GMM.cpp
 打开画图程序 rqt
 画位置和刚度曲线：/iiwa/state/CartesianPose/pose/position/xyz和/pose_go/pose/position/xyz进行对比分析
 配置保存在iiwa_ros/src/SEDS_GMM中
+
+记录话题包：
+mkdir ~/bagfiles/wr_SEDS_GMM
+cd ~/bagfiles/wr_SEDS_GMM
+1.记录纯位置控制下的位置数据（实际位置和命令位置）
+rosbag record -O wr_seds_GMM_position_1.bag /iiwa/command/CartesianPose /iiwa/state/CartesianPose /pose_go
+2.记录变阻抗控制下的位置数据（实际位置和命令位置）
+rosbag record -O wr_seds_GMM_impedance_1.bag /iiwa/command/CartesianPose /iiwa/state/CartesianPose /pose_go
+
+matlab处理
+用了新命令timeseries来处理，十分方便
+为了下次节省时间，可以保存整个工作空间：file --> sace workspace as
 

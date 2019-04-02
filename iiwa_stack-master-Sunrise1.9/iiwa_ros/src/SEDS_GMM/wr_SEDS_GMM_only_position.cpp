@@ -60,6 +60,10 @@ void pose_iiwa_Callback(const geometry_msgs::PoseStamped& msg1)
   pose_go.pose.orientation.y =msg1.pose.orientation.y;
   pose_go.pose.orientation.z =msg1.pose.orientation.z;
   pose_go.pose.orientation.w =msg1.pose.orientation.w;
+  // pose_go.pose.orientation.x=2.24082595912e-05;
+  // pose_go.pose.orientation.y=0.999999463558;
+  // pose_go.pose.orientation.z=1.84833353326e-05;
+  // pose_go.pose.orientation.w=-0.00104649211296;
   // ROS_INFO("%f", msg1.pose.position.x);
 }
 void wrench_iiwa_callback(const geometry_msgs::WrenchStamped& msg1)
