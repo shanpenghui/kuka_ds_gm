@@ -61,11 +61,39 @@
 #include <geometry_msgs/PoseArray.h>  
 #include "std_msgs/Float64.h"
 
-void callback(const geometry_msgs::WrenchStampedConstPtr& netft_data, const geometry_msgs::PoseArrayConstPtr& targets)  //回调中包含多个消息
+//tf2_ros::TransformBroadcaster tf2_broadcaster;
+geometry_msgs::TransformStamped transformStamped;
+
+ros::Publisher sensor_pub;
+
+void callback(const geometry_msgs::WrenchStampedConstPtr& netft_data_msg, const geometry_msgs::PoseArrayConstPtr& targets);  //回调中包含多个消息
+
+int main(int argc, char** argv)
+{
+  ros::init(argc, argv, "get_all_sensor_in_one");
+
+  ros::NodeHandle nh;
+
+  ros::Publisher sensor_pub = nh.advertise<geometry_msgs::TransformStamped>("/sensor_together", 1000);
+
+  message_filters::Subscriber<geometry_msgs::WrenchStamped> force_sub(nh, "/netft_data", 1);    // ati 输入
+  message_filters::Subscriber<geometry_msgs::PoseArray> pose_sub(nh, "/polaris_sensor/targets", 1);     // ndi 输入
+  message_filters::TimeSynchronizer<geometry_msgs::WrenchStamped, geometry_msgs::PoseArray> sync(force_sub, pose_sub, 2);       // 同步
+  sync.registerCallback(boost::bind(&callback, _1, _2));                   // 回调
+
+  //回调后记录下来；
+  // sensor_pub.publish(sync);
+
+  ros::spin();
+
+  return 0;
+}
+
+void callback(const geometry_msgs::WrenchStampedConstPtr& netft_data_msg, const geometry_msgs::PoseArrayConstPtr& targets)  //回调中包含多个消息
 {
 
-  static tf2_ros::TransformBroadcaster tf2_broadcaster;
-  geometry_msgs::TransformStamped transformStamped;
+  // static tf2_ros::TransformBroadcaster tf2_broadcaster;
+  // geometry_msgs::TransformStamped transformStamped;
 
   transformStamped.header.stamp = ros::Time::now();
   transformStamped.header.frame_id = "ts_frame";
@@ -74,34 +102,17 @@ void callback(const geometry_msgs::WrenchStampedConstPtr& netft_data, const geom
   transformStamped.transform.translation.y = targets->poses[0].position.y;
   transformStamped.transform.translation.z = targets->poses[0].position.z;
   tf2::Quaternion q;
-  transformStamped.transform.rotation.x = netft_data->wrench.force.x;
-  transformStamped.transform.rotation.y = netft_data->wrench.force.y;
-  transformStamped.transform.rotation.z = netft_data->wrench.force.z;
+  transformStamped.transform.rotation.x = netft_data_msg->wrench.force.x;
+  transformStamped.transform.rotation.y = netft_data_msg->wrench.force.y;
+  transformStamped.transform.rotation.z = netft_data_msg->wrench.force.z;
   transformStamped.transform.rotation.w = targets->poses[0].orientation.w;
 
-  tf2_broadcaster.sendTransform(transformStamped);
+  //tf2_broadcaster.sendTransform(transformStamped);
+
+  ROS_INFO("Synchronization successful [%f]", 10.00);//transformStamped.transform.rotation.z
+
+  sensor_pub.publish(transformStamped);
 }
-
-int main(int argc, char** argv)
-{
-  ros::init(argc, argv, "get_all_sensor_in_one");
-
-  ros::NodeHandle nh;
-
-  message_filters::Subscriber<geometry_msgs::WrenchStamped> force_sub(nh, "/netft_data", 1);    // ati 输入
-  message_filters::Subscriber<geometry_msgs::PoseArray> pose_sub(nh, "/targets", 1);     // ndi 输入
-  message_filters::TimeSynchronizer<geometry_msgs::WrenchStamped, geometry_msgs::PoseArray> sync(force_sub, pose_sub, 10);       // 同步
-  sync.registerCallback(boost::bind(&callback, _1, _2));                   // 回调
-
-  //回调后记录下来；
-
-
-  ros::spin();
-
-  return 0;
-}
-
-
 
 ///////、、、、、、、、、、、、、、、、、、、、之前除了同步都好使的版本
 

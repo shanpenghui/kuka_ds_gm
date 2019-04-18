@@ -82,6 +82,10 @@ add_executable(wr_SEDS_GMM_only_position src/SEDS_GMM/wr_SEDS_GMM_only_position.
 target_link_libraries(wr_SEDS_GMM_only_position ${catkin_LIBRARIES} )
 add_dependencies(wr_SEDS_GMM_only_position iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
+add_executable(wr_SEDS_GMM_backup_2019_4_1 src/SEDS_GMM/wr_SEDS_GMM_backup_2019_4_1.cpp )
+target_link_libraries(wr_SEDS_GMM_backup_2019_4_1 ${catkin_LIBRARIES} )
+add_dependencies(wr_SEDS_GMM_backup_2019_4_1 iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+
 ###src/topic_synchronizer
 
 add_executable(get_all_sensor_in_one src/topic_synchronizer/get_all_sensor_in_one.cpp )

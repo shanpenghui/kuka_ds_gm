@@ -58,10 +58,10 @@ bool GaussianMixture::loadParams(const char fileName[])
 	// Load coefficient of a GMM from a file (stored by saveParams Method
 	// or with matlab
 	std::ifstream fich(fileName);
-	if (!fich.is_open())
+	if (!fich.is_open())   //https://blog.csdn.net/kingstar158/article/details/6859379
 		return false;
 			
-	fich >> dim >> nState;
+	fich >> dim >> nState;   //read one by one and never look back
 	dim /= 2;
 	inComponents.Resize(dim);
 	outComponents.Resize(dim);
@@ -666,7 +666,9 @@ double GaussianMixture::pdfState(Vector Vin,int state)
 double GaussianMixture::pdfState(Vector Vin,Vector Components,int state) 
 {
 	/* Compute the probability density function at vector Vin, 
-	 (given along the dimensions Components), for a given state */ 
+	 (given along the dimensions Components), for a given state 
+	 
+	 W.R.: the result is the P(x|k) condition probability*/ 
 	Vector mu_s;
 	Matrix sig_s;
 	Matrix inv_sig_s;
@@ -755,7 +757,7 @@ Matrix GaussianMixture::doRegression(Matrix in,Matrix * SigmaOut)
 		Pxi(i,s) = p_i;
 		norm_f += p_i;
 	}
-	Pxi.SetRow(Pxi.GetRow(i)/norm_f,i);
+	Pxi.SetRow(Pxi.GetRow(i)/norm_f,i);  //W.R.:beiyesi gonshi, result is P(Bi|A), posterior probability
 	}
 
 	subSigma = new Matrix[nState];

@@ -54,11 +54,27 @@ source /opt/ros/indigo/setup.bash
  source devel/setup.bash
 　roslaunch ...
 
+
+
+#################传感器同步##################
+网卡地址分配，主网卡connect-yumi，192.168.168.10 255.255.255.0
+副网卡ATI 192.168.1.68 255.255.255.0 gate192.168.1.1 DNS192.168.1.10
 ##########—————————ATI—————————————
  rosrun netft_control netft_node --address 192.168.1.1
 
 ##########————————————NDI——————————————
 rosrun polaris_sensor polaris_sensor_node _roms:=/home/edward/8700339.rom _port:=/dev/ttyUSB0
+
+#######之后打开机器人，在运行
+rosrun iiwa_ros get_all_sensor_in_one
+##记录数据
+rosbag record -O wr_sensor_together_1.bag /iiwa/state/CartesianPose /pose_go
+
+
+
+
+
+
 
 ##########——————————2018.6.24开关实验————————————
 ##二维

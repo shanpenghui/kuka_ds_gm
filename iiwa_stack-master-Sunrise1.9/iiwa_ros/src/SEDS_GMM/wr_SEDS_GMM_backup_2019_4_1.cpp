@@ -184,10 +184,10 @@ int main(int argc, char **argv)
     in.close();//关闭文件
 
   //设定SEDS模型运算时的变量
-    int d=3;float T=1.0/15.0;float T1=1.0/1000.0;float T2=1.0/5.0;float T3=1.0/2.0;float T4=1.0/1.0; int GMMtime=0; float xd_mean1=3.0;
-    MathLib::Vector x,x_xiangdui,xd,xT,xT_second,x_endGMM,x_go,x_position_before,xd1,xd2,xd3,xd4,xd5; //defining the required variables
+    int d=3;float T=1.0/15.0;float T1=1.0/1000.0;float T2=1.0/5.0;float T3=1.0/2.0;float T4=1.0/1.0; int GMMtime=0;
+    MathLib::Vector x,x_xiangdui,x_xiangdui1,x_xiangdui2,xd,xT,xT_second,x_endGMM,x_go,x_position_before,xd1,xd2,xd3,xd4,xd5; //defining the required variables
     x.Resize(d); //d is the dimensionality of  your model
-    xd.Resize(d);xd1.Resize(d);xd2.Resize(d);xd3.Resize(d);xd4.Resize(d);xd5.Resize(d);x_xiangdui.Resize(d);
+    xd.Resize(d);xd1.Resize(d);xd2.Resize(d);xd3.Resize(d);xd4.Resize(d);xd5.Resize(d);x_xiangdui.Resize(d);x_xiangdui1.Resize(d);x_xiangdui2.Resize(d);
     xT.Resize(d);
     xT_second.Resize(d);
     x_endGMM.Resize(d);
@@ -329,9 +329,9 @@ while (ros::ok())
 
       cout << "  first step; \n ";
     //运行模型回归
-      x_xiangdui=x - xT; //Transformation into the target frame of  reference   x -= xT;不成功，原因是后面x_go 的计算用到了x;
+      x_xiangdui1=x - xT; //Transformation into the target frame of  reference   x -= xT;不成功，原因是后面x_go 的计算用到了x;
       //x.Print("x = ");
-      mySEDS.doRegression(x_xiangdui,xd);  // Estimating xd at x
+      mySEDS.doRegression(x_xiangdui1,xd);  // Estimating xd at x
       xd.Print("xd = "); //Printing the value of  xd
     //给机器人速度与阻抗命令
       x_go[0]=x[0]+xd[0]*T;
@@ -404,88 +404,12 @@ while (ros::ok())
       // {
       //   T=T4;
       // }
-      if(xd_mean1<0.018)//距离远说明还在SEDS范围中   //sqrt(pose_comd.pose.position.x-xT[0])+sqrt(pose_comd.pose.position.z-xT[2])<-0.0000000001
+      if(xd_mean1<0.022)//距离远说明还在SEDS范围中   //sqrt(pose_comd.pose.position.x-xT[0])+sqrt(pose_comd.pose.position.z-xT[2])<-0.0000000001
       {
         SEDSstage=2;
         cout << "  change to second step; \n ";
       }
   }
-
-//   if (SEDSstage==9)
-//   {
-//   //如果seds运行未完成，则执行seds
-
-//       cout << "  9 step; \n ";
-//     //运行模型回归
-//       x_xiangdui=x - xT; //Transformation into the target frame of  reference   x -= xT;不成功，原因是后面x_go 的计算用到了x;
-//       //x.Print("x = ");
-//       mySEDS.doRegression(x_xiangdui,xd);  // Estimating xd at x
-//       xd.Print("xd = "); //Printing the value of  xd
-//     //给机器人速度与阻抗命令
-//       x_go[0]=x[0]+xd[0]*T2;
-//       x_go[1]=x[1]+xd[1]*T2;
-//       x_go[2]=x[2]+xd[2]*T2;
-
-//           //   //查看当前位置
-//           // cout << "x are: ";
-//           // for (int count = 0; count < 3; count++){
-//           // cout << x[count] << "; ";
-//           //     }
-//           //   //查看位置命令
-//           // cout << "x_go are: ";
-//           // for (int count = 0; count < 3; count++){
-//           // cout << x_go[count] << "; ";
-//           //     }
-
-
-//     //传递给publisher
-//       pose_comd.pose.position.x=x_go[0];
-//       pose_comd.pose.position.y=x_go[1];
-//       pose_comd.pose.position.z=x_go[2];
-//       // pose_comd.pose.orientation.x=msg.pose.orientation.x;
-//       // pose_comd.pose.orientation.y=msg.pose.orientation.y;
-//       // pose_comd.pose.orientation.z=msg.pose.orientation.z;
-//       // pose_comd.pose.orientation.w=msg.pose.orientation.w;
-//       pose_comd.pose.orientation.x=pose_go.pose.orientation.x;
-//       pose_comd.pose.orientation.y=pose_go.pose.orientation.y;
-//       pose_comd.pose.orientation.z=pose_go.pose.orientation.z;
-//       pose_comd.pose.orientation.w=pose_go.pose.orientation.w;
-//     //为了仿真设置的速度
-//     //   vol_comd.pose.position.x=xd[0];
-//     //   vol_comd.pose.position.y=xd[1];
-//     //   vol_comd.pose.position.z=xd[2];
-//     //   vol_command_pub.publish(vol_comd);
-
-
-// //     //发送位置与阻抗命令
-//       pose_command_pub.publish(pose_comd);
-// // //阻抗的设定
-// //       kx=10;
-// //       ky=10;
-// //       kz=10;
-// //       set_impedance(config,pt_mode);
-// //       client.call(config);
-//       stiff_comd.position.x=300;
-//       stiff_comd.position.y=300;
-//       stiff_comd.position.z=300;
-//       stiff_command_pub.publish(stiff_comd);
-// //       // ROS_INFO("%f,%f,%f", kx,ky,kz);
-//       // pose_go_pub.publish(pose_go);
-//       // force_go_pub.publish(force_go);
-
-
-
-//     //对SEDS进行的状态进行判断，
-//     //如果距离小于某个值之后，就可以执行位置命令并给SEDSstage加一
-//       float xd_mean1=sqrt(xd[0]*xd[0])+sqrt(xd[1]*xd[1])+sqrt(xd[2]*xd[2]);
-//       cout << " the mean of vol: ";
-//       cout << xd_mean1 << "; \n";
-//       if(xd_mean1<0.09)//距离远说明还在SEDS范围中   //sqrt(pose_comd.pose.position.x-xT[0])+sqrt(pose_comd.pose.position.z-xT[2])<-0.0000000001
-//       {
-//         SEDSstage=2;
-//         cout << "  change to second step; \n ";
-//       }
-//   }
 
 
 //若走到GMM起始点，就开始GMM
@@ -562,8 +486,8 @@ while (ros::ok())
   {
           cout << "  third step;  \n";
         //运行模型回归
-          x_xiangdui=x - xT_second; //Transformation into the target frame of  reference
-          mySEDS_second.doRegression(x_xiangdui,xd3);  // Estimating xd at x
+          x_xiangdui2=x - xT_second; //Transformation into the target frame of  reference
+          mySEDS_second.doRegression(x_xiangdui2,xd3);  // Estimating xd at x
           xd3.Print("xd3 = "); //Printing the value of  xd
         //给机器人速度与阻抗命令
           x_go[0]=x[0]+xd3[0]*T;
@@ -639,16 +563,16 @@ void set_impedance(iiwa_msgs::ConfigureSmartServo& config1,int& pt1)
   config1.request.mode.cartesian_stiffness.stiffness.x = 1000;
   config1.request.mode.cartesian_stiffness.stiffness.y = 1000;
   config1.request.mode.cartesian_stiffness.stiffness.z = 1000;
-  config1.request.mode.cartesian_stiffness.stiffness.a =1000;
-  config1.request.mode.cartesian_stiffness.stiffness.b =1000;
-  config1.request.mode.cartesian_stiffness.stiffness.c =1000;
+  config1.request.mode.cartesian_stiffness.stiffness.a =300;
+  config1.request.mode.cartesian_stiffness.stiffness.b =300;
+  config1.request.mode.cartesian_stiffness.stiffness.c =300;
 
-  config1.request.mode.cartesian_damping.damping.x = 0.1;
-  config1.request.mode.cartesian_damping.damping.y = 0.1;
-  config1.request.mode.cartesian_damping.damping.z = 0.1;
-  config1.request.mode.cartesian_damping.damping.a = 0.1;
-  config1.request.mode.cartesian_damping.damping.b = 0.1;
-  config1.request.mode.cartesian_damping.damping.c = 0.1;
+  config1.request.mode.cartesian_damping.damping.x = 0.8;
+  config1.request.mode.cartesian_damping.damping.y = 0.8;
+  config1.request.mode.cartesian_damping.damping.z = 0.8;
+  config1.request.mode.cartesian_damping.damping.a = 0.8;
+  config1.request.mode.cartesian_damping.damping.b = 0.8;
+  config1.request.mode.cartesian_damping.damping.c = 0.8;
 
   config1.request.mode.nullspace_stiffness = 10;
   config1.request.mode.nullspace_damping = 1;
@@ -663,12 +587,12 @@ void set_impedance(iiwa_msgs::ConfigureSmartServo& config1,int& pt1)
   config1.request.mode.cartesian_stiffness.stiffness.b = 300;
   config1.request.mode.cartesian_stiffness.stiffness.c = 300;
 
-  config1.request.mode.cartesian_damping.damping.x = 0.1;
-  config1.request.mode.cartesian_damping.damping.y = 0.1;
-  config1.request.mode.cartesian_damping.damping.z = 0.1;
-  config1.request.mode.cartesian_damping.damping.a = 0.1;
-  config1.request.mode.cartesian_damping.damping.b = 0.1;
-  config1.request.mode.cartesian_damping.damping.c = 0.1;
+  config1.request.mode.cartesian_damping.damping.x = 0.8;
+  config1.request.mode.cartesian_damping.damping.y = 0.8;
+  config1.request.mode.cartesian_damping.damping.z = 0.8;
+  config1.request.mode.cartesian_damping.damping.a = 0.8;
+  config1.request.mode.cartesian_damping.damping.b = 0.8;
+  config1.request.mode.cartesian_damping.damping.c = 0.8;
 
   config1.request.mode.nullspace_stiffness =10;
   config1.request.mode.nullspace_damping = 1;
