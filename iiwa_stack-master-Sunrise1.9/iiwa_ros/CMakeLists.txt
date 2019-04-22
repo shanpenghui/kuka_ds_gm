@@ -57,51 +57,58 @@ add_dependencies(${PROJECT_NAME}
 
 ###src/SEDS_GMM
 
-add_executable(readGMM src/SEDS_GMM/readGMM.cpp )
-target_link_libraries(readGMM ${catkin_LIBRARIES} )
-add_dependencies(readGMM iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+    add_executable(readGMM src/SEDS_GMM/readGMM.cpp )
+    target_link_libraries(readGMM ${catkin_LIBRARIES} )
+    add_dependencies(readGMM iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
-add_executable(readGMM1 src/SEDS_GMM/readGMM1.cpp )
-target_link_libraries(readGMM1 ${catkin_LIBRARIES} )
-add_dependencies(readGMM1 iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+    add_executable(readGMM1 src/SEDS_GMM/readGMM1.cpp )
+    target_link_libraries(readGMM1 ${catkin_LIBRARIES} )
+    add_dependencies(readGMM1 iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
-add_executable(pt_sj_go_SEDS src/SEDS_GMM/pt_sj_go_SEDS.cpp )
-target_link_libraries(pt_sj_go_SEDS ${catkin_LIBRARIES} )
-add_dependencies(pt_sj_go_SEDS iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+    add_executable(pt_sj_go_SEDS src/SEDS_GMM/pt_sj_go_SEDS.cpp )
+    target_link_libraries(pt_sj_go_SEDS ${catkin_LIBRARIES} )
+    add_dependencies(pt_sj_go_SEDS iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
-add_executable(pt_sj_go_change src/SEDS_GMM/pt_sj_go_change.cpp )
-target_link_libraries(pt_sj_go_change ${catkin_LIBRARIES} )
-add_dependencies(pt_sj_go_change iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+    add_executable(pt_sj_go_change src/SEDS_GMM/pt_sj_go_change.cpp )
+    target_link_libraries(pt_sj_go_change ${catkin_LIBRARIES} )
+    add_dependencies(pt_sj_go_change iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
-add_executable(wr_SEDS_GMM src/SEDS_GMM/wr_SEDS_GMM.cpp )
-target_link_libraries(wr_SEDS_GMM ${catkin_LIBRARIES} )
-add_dependencies(wr_SEDS_GMM iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+    add_executable(wr_SEDS_GMM src/SEDS_GMM/wr_SEDS_GMM.cpp )
+    target_link_libraries(wr_SEDS_GMM ${catkin_LIBRARIES} )
+    add_dependencies(wr_SEDS_GMM iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
 
-add_executable(wr_SEDS_GMM_only_position src/SEDS_GMM/wr_SEDS_GMM_only_position.cpp )
-target_link_libraries(wr_SEDS_GMM_only_position ${catkin_LIBRARIES} )
-add_dependencies(wr_SEDS_GMM_only_position iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+    add_executable(wr_SEDS_GMM_only_position src/SEDS_GMM/wr_SEDS_GMM_only_position.cpp )
+    target_link_libraries(wr_SEDS_GMM_only_position ${catkin_LIBRARIES} )
+    add_dependencies(wr_SEDS_GMM_only_position iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
-add_executable(wr_SEDS_GMM_backup_2019_4_1 src/SEDS_GMM/wr_SEDS_GMM_backup_2019_4_1.cpp )
-target_link_libraries(wr_SEDS_GMM_backup_2019_4_1 ${catkin_LIBRARIES} )
-add_dependencies(wr_SEDS_GMM_backup_2019_4_1 iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+    add_executable(wr_SEDS_GMM_backup_2019_4_1 src/SEDS_GMM/wr_SEDS_GMM_backup_2019_4_1.cpp )
+    target_link_libraries(wr_SEDS_GMM_backup_2019_4_1 ${catkin_LIBRARIES} )
+    add_dependencies(wr_SEDS_GMM_backup_2019_4_1 iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
 ###src/topic_synchronizer
 
-add_executable(get_all_sensor_in_one src/topic_synchronizer/get_all_sensor_in_one.cpp )
-target_link_libraries(get_all_sensor_in_one ${catkin_LIBRARIES} )
-add_dependencies(get_all_sensor_in_one iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+    add_executable(get_all_sensor_in_one src/topic_synchronizer/get_all_sensor_in_one.cpp )
+    target_link_libraries(get_all_sensor_in_one ${catkin_LIBRARIES} )
+    add_dependencies(get_all_sensor_in_one iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
+    add_executable(get_all_sensor_in_one_ApproximateTime src/topic_synchronizer/get_all_sensor_in_one_ApproximateTime.cpp )
+    target_link_libraries(get_all_sensor_in_one_ApproximateTime ${catkin_LIBRARIES} )
+    add_dependencies(get_all_sensor_in_one_ApproximateTime iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+
+    add_executable(get_all_sensor_in_one_ApproximateTime_publisher src/topic_synchronizer/get_all_sensor_in_one_ApproximateTime_publisher.cpp )
+    target_link_libraries(get_all_sensor_in_one_ApproximateTime_publisher ${catkin_LIBRARIES} )
+    add_dependencies(get_all_sensor_in_one_ApproximateTime_publisher iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
 ####src/simulate_in_gazebo
 
-add_executable(joint_position_for_gazebo src/simulate_in_gazebo/joint_position_for_gazebo.cpp )
-target_link_libraries(joint_position_for_gazebo ${catkin_LIBRARIES} )
-add_dependencies(joint_position_for_gazebo iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+    add_executable(joint_position_for_gazebo src/simulate_in_gazebo/joint_position_for_gazebo.cpp )
+    target_link_libraries(joint_position_for_gazebo ${catkin_LIBRARIES} )
+    add_dependencies(joint_position_for_gazebo iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
-add_executable(pt_sj_go_SEDS_for_gazebo src/simulate_in_gazebo/pt_sj_go_SEDS_for_gazebo.cpp )
-target_link_libraries(pt_sj_go_SEDS_for_gazebo ${catkin_LIBRARIES} )
-add_dependencies(pt_sj_go_SEDS_for_gazebo iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+    add_executable(pt_sj_go_SEDS_for_gazebo src/simulate_in_gazebo/pt_sj_go_SEDS_for_gazebo.cpp )
+    target_link_libraries(pt_sj_go_SEDS_for_gazebo ${catkin_LIBRARIES} )
+    add_dependencies(pt_sj_go_SEDS_for_gazebo iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
 
 

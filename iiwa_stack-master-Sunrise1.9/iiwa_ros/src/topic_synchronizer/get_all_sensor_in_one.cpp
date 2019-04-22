@@ -61,6 +61,8 @@
 #include <geometry_msgs/PoseArray.h>  
 #include "std_msgs/Float64.h"
 
+using namespace message_filters;
+
 //tf2_ros::TransformBroadcaster tf2_broadcaster;
 geometry_msgs::TransformStamped transformStamped;
 
@@ -78,7 +80,7 @@ int main(int argc, char** argv)
 
   message_filters::Subscriber<geometry_msgs::WrenchStamped> force_sub(nh, "/netft_data", 1);    // ati 输入
   message_filters::Subscriber<geometry_msgs::PoseArray> pose_sub(nh, "/polaris_sensor/targets", 1);     // ndi 输入
-  message_filters::TimeSynchronizer<geometry_msgs::WrenchStamped, geometry_msgs::PoseArray> sync(force_sub, pose_sub, 2);       // 同步
+  message_filters::TimeSynchronizer<geometry_msgs::WrenchStamped, geometry_msgs::PoseArray> sync(force_sub, pose_sub, 10);       // 同步
   sync.registerCallback(boost::bind(&callback, _1, _2));                   // 回调
 
   //回调后记录下来；

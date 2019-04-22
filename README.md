@@ -54,28 +54,6 @@ source /opt/ros/indigo/setup.bash
  source devel/setup.bash
 　roslaunch ...
 
-
-
-#################传感器同步##################
-网卡地址分配，主网卡connect-yumi，192.168.168.10 255.255.255.0
-副网卡ATI 192.168.1.68 255.255.255.0 gate192.168.1.1 DNS192.168.1.10
-##########—————————ATI—————————————
- rosrun netft_control netft_node --address 192.168.1.1
-
-##########————————————NDI——————————————
-rosrun polaris_sensor polaris_sensor_node _roms:=/home/edward/8700339.rom _port:=/dev/ttyUSB0
-
-#######之后打开机器人，在运行
-rosrun iiwa_ros get_all_sensor_in_one
-##记录数据
-rosbag record -O wr_sensor_together_1.bag /iiwa/state/CartesianPose /pose_go
-
-
-
-
-
-
-
 ##########——————————2018.6.24开关实验————————————
 ##二维
 rosrun iiwa_ros pt_admittance_add_force_2d 
@@ -130,11 +108,15 @@ sudo sh Track
 
 
 ###############git-------------------------------------------
-git init
-git add .
-git commit -m "change..."
+git init  #初始化
+git statu   #查看当前状态
+git add .     #增加文档
+git commit -m "change..."     #设置备注
 ###注意在pull和push时要注意是否版本有区别，对于长时间没搞过的，要对比一下在合并：https://blog.csdn.net/zcw4237256/article/details/78542122，对于每天都做的，那就
-git pull
+
+git pull   #只有在需要下载的时候才运行
+
+git push -u origin master  #第一个最常用 -u代表
 git push origin master
 git push origin Runiiwa
 
@@ -178,4 +160,31 @@ rosbag record -O wr_seds_GMM_impedance_1.bag /iiwa/command/CartesianPose /iiwa/s
 matlab处理
 用了新命令timeseries来处理，十分方便
 为了下次节省时间，可以保存整个工作空间：file --> sace workspace as
+
+
+
+
+#################传感器同步##################
+网卡地址分配，主网卡connect-yumi，192.168.168.10 255.255.255.0
+副网卡ATI 192.168.1.68 255.255.255.0 gate192.168.1.1 DNS192.168.1.10
+##########—————————ATI—————————————
+ rosrun netft_control netft_node --address 192.168.1.1
+
+##########————————————NDI——————————————
+rosrun polaris_sensor polaris_sensor_node _roms:=/home/edward/8700339.rom _port:=/dev/ttyUSB0
+
+#######之后打开机器人，在运行
+rosrun iiwa_ros get_all_sensor_in_one
+
+
+
+
+##############get all sensor in all 调试
+1记录数据
+rosbag record -O wr_sensor_together_test_1.bag /netft_data /polaris_sensor/targets
+
+2,运行程序,回放话题，运行命令之后再次记录 
+
+
+rosbag record -O wr_sensor_together_look_1.bag /netft_data /polaris_sensor/targets /sensor_together
 
