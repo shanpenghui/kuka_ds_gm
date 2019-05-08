@@ -1,0 +1,119 @@
+[global_config]
+[keybindings]
+[profiles]
+  [[default]]
+    use_system_font = False
+    login_shell = True
+    background_darkness = 0.92
+    background_type = transparent
+    background_image = None
+    cursor_color = "#3036ec"
+    foreground_color = "#00ff00"
+    show_titlebar = False
+    custom_command = tmux
+    font = Ubuntu Mono 15
+[layouts]
+  [[default]]
+    [[[child0]]]
+      position = 143:247
+      type = Window
+      order = 0
+      parent = ""
+      size = 802, 523
+    [[[child1]]]
+      position = 261
+      type = VPaned
+      order = 0
+      parent = child0
+    [[[terminal3]]]
+      profile = default
+      type = Terminal
+      order = 1
+      parent = child1
+      command = sleep 3s;terminator -l syn_sensor;bash
+    [[[terminal2]]]
+      profile = default
+      command = source /opt/ros/indigo/setup.bash;roscore;bash
+      type = Terminal
+      order = 0
+      parent = child1
+  [[syn_sensor]]
+    [[[child0]]]
+      position = 75:25
+      type = Window
+      order = 0
+      parent = ""
+      size = 1842, 1027
+    [[[child1]]]
+      position = 925
+      type = HPaned
+      order = 0
+      parent = child0
+    [[[child2]]]
+      position = 515
+      type = VPaned
+      order = 0
+      parent = child1
+    [[[child3]]]
+      position = 259
+      type = VPaned
+      order = 0
+      parent = child2
+    [[[child7]]]
+      position = 721
+      type = VPaned
+      order = 1
+      parent = child1
+    [[[child8]]]
+      position = 116
+      type = VPaned
+      order = 0
+      parent = child7
+    [[[child10]]]
+      position = 458
+      type = HPaned
+      order = 1
+      parent = child8
+    [[[terminal11]]]
+      profile = default
+      type = Terminal
+      order = 0
+      parent = child10
+      command = rostopic echo /netft_data;bash
+    [[[terminal13]]]
+      profile = default
+      type = Terminal
+      order = 1
+      parent = child7
+      command = rostopic echo /sensor_together ;bash
+    [[[terminal12]]]
+      profile = default
+      type = Terminal
+      order = 1
+      parent = child10
+      command = rostopic echo /polaris_sensor/targets ;bash
+    [[[terminal5]]]
+      profile = default
+      type = Terminal
+      order = 1
+      parent = child3
+      command = ""
+    [[[terminal4]]]
+      profile = default
+      type = Terminal
+      order = 0
+      parent = child3
+      command = cd /usr/local/MATLAB/R2016b/bin&& ./matlab ;bash
+    [[[terminal6]]]
+      profile = default
+      type = Terminal
+      order = 1
+      parent = child2
+      command = cd kuka_catkin/ ;bash
+    [[[terminal9]]]
+      profile = default
+      type = Terminal
+      order = 0
+      parent = child8
+      command = cd cd bagfiles/all_sensor_in_one/  && rosbag play -l wr_sensor_together_test_2.bag ;bash
+[plugins]

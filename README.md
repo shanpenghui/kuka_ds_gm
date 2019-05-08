@@ -6,15 +6,15 @@ $ export ROS_PACKAGE_PATH=~/indigo_workspace/sandbox:$ROS_PACKAGE_PATH
 $ roscd beginner_tutorials
 source ./devel/setup.bash
 
-##########<----arduino,2018.3---->
+##########    <----arduino,2018.3---->
 arduino
 rosrun rosserial_python serial_node.py _port:=/dev/ttyUSB0
 
-###########<----matlab---->
+###########    <----matlab---->
 $ cd /usr/local/MATLAB/R2016b/bin
 $ ./matlab # 如果是第一次运行，建议加sudo
 
-##########<----change bashrc---->
+##########    <----change bashrc---->
 gedit ~/.bashrc &
 source ~/.bashrc
 
@@ -27,7 +27,7 @@ source ~/iiwa/devel/setup.bash
 export ROS_IP=192.168.168.10
 export ROS_MASTER_URI=http://$ROS_IP:11311
 
-##########<---ros interface -->
+##########    <---ros interface -->
 catkin_make
 rqt_plot rqt_plot
 
@@ -38,23 +38,30 @@ rosbag play subset.bag /iiwa/state/CartesianPose:=/record_position
 
 rosrun rosbag topic_renamer.py /iiwa/state/CartesianPose 2018-02-10-08-38-20.bag /record_position 2018-05-11-14-49-49.bag#这个命令不会使
 
-##########<----Stanfod---->
+##########   <----Stanfod---->
 cd catkin_ws_iiwa/devel/lib/iiwa/
 ./iiwa-bin
 
 
-###########<------新建一个包-------->
+###########  <------新建一个git包-------->
 cd <path_to_catkin_ws>
 cd src
 git clone ...
 source /opt/ros/indigo/setup.bash
+
+######### ----------新建ros包-------------
+cd src
+catkin_create_pkg 包的名 actionlib message_generation roscpp rospy std_msgs actionlib_msgs
+cd ..
+catkin_make
+source devel/setup.bash	
 
 ###########<------roslaunch运行新包里的程序------->
  cd <path_to_catkin_ws>
  source devel/setup.bash
 　roslaunch ...
 
-##########——————————2018.6.24开关实验————————————
+########## ——————————2018.6.24开关实验————————————
 ##二维
 rosrun iiwa_ros pt_admittance_add_force_2d 
 应该用
@@ -84,7 +91,7 @@ wr_2018.6.24_3d_6emg_1.bag
 ...
 wr_2018.6.24_3d_6emg_6.bag
 
-###########--------2018.6.26辨识实验----------------
+###########  --------2018.6.26辨识实验----------------
 ###低中高三次
 ndi:wrndi_bs_1  ATI:wrati_bs_1   emg:wremg_bs_1
 ###单项个三次
@@ -102,35 +109,36 @@ sh NDI_ToolBox_v5-001-017_for_Linux.sh
 cd opt/NDIToolBox/
 sudo sh Track
 
-###########--------MYO----------------
+#########--------MYO----------------
  rosrun ros_myo myo-rawNode.py    打开myo通讯
  rosrun ros_myo emg_ascii_graph.py   获取肌电信号
 
 
-###############git-------------------------------------------
+########----------------git---------------------------
+###  创建一个本地仓并上传
 git init  #初始化
 git statu   #查看当前状态
 git add .     #增加文档
 git commit -m "change..."     #设置备注
-###注意在pull和push时要注意是否版本有区别，对于长时间没搞过的，要对比一下在合并：https://blog.csdn.net/zcw4237256/article/details/78542122，对于每天都做的，那就
+git remote add origin git@github.com:RLoad/xxxx.git
+git push -u origin master
 
-git pull   #只有在需要下载的时候才运行
+###  本地与远程的同步：https://blog.csdn.net/zcw4237256/article/details/78542122
 
-git push -u origin master  #第一个最常用 -u代表
-git push origin master
-git push origin Runiiwa
-
-####注意只同步SRC文件夹中内容用上面命令，整个文件夹就直接push到master
-####标准做法
+###  注意只同步SRC文件夹中内容用上面命令，整个文件夹就直接push到master
+###  标准做法
 git status // 查看版本库的状态
 git add .|[file you want add like README.md] // 添加修改的文件进入版本库
 git commit -m "the content of your modify" // 提交版本库
 git push -u origin master // 上传到远程版本库
 
+###  注意在pull和push时要注意是否版本有区别
+git pull   #只有在需要下载的时候才运行
+git push -u origin master  #第一个最常用 -u代表
 
 
 
-##############gazebo 仿真---------------------------------------
+#######-----------gazebo 仿真----------------------------
 首先记住要讲gazebo的launch文件中的控制器类型改成关节控制
  roslaunch iiwa_gazebo iiwa_gazebo.launch 打开仿真
 
@@ -143,7 +151,7 @@ rostopic echo /iiwa/joint_states 查看关节数据是否准确
 rosrun iiwa_ros joint_position_for_gazebo 运行正逆运动学并发送关节指令
 rosrun iiwa_ros pt_sj_go_SEDS_for_gazebo 运行SEDS
 
-###############SEDS_GMM调试    最后rqt不能显示pose_go，所以用话题报记录之后用MATLAB处理,并git保存在kuka_ds_gm和5_wr_SEDS_GMM中
+######------------SEDS_GMM调试    最后rqt不能显示pose_go，所以用话题报记录之后用MATLAB处理,并git保存在kuka_ds_gm和5_wr_SEDS_GMM中
 运行程序：rosrun iiwa_ros wr_SEDS_GMM.cpp
 打开画图程序 rqt
 画位置和刚度曲线：/iiwa/state/CartesianPose/pose/position/xyz和/pose_go/pose/position/xyz进行对比分析
@@ -164,7 +172,7 @@ matlab处理
 
 
 
-#################传感器同步##################
+######-----------传感器同步---------------------
 网卡地址分配，主网卡connect-yumi，192.168.168.10 255.255.255.0
 副网卡ATI 192.168.1.68 255.255.255.0 gate192.168.1.1 DNS192.168.1.10
 ##########—————————ATI—————————————
@@ -179,7 +187,7 @@ rosrun iiwa_ros get_all_sensor_in_one
 
 
 
-##############get all sensor in all 调试
+######-----------get all sensor in all 调试-----------------
 1记录数据
 rosbag record -O wr_sensor_together_test_1.bag /netft_data /polaris_sensor/targets
 
@@ -188,3 +196,7 @@ rosbag record -O wr_sensor_together_test_1.bag /netft_data /polaris_sensor/targe
 
 rosbag record -O wr_sensor_together_look_1.bag /netft_data /polaris_sensor/targets /sensor_together
 
+#######-----------用terminator自动打开多个窗口-----------------
+1.保存当前窗口分布，并给每个窗口输入初始命令，加 ；bash
+2.退出，关闭，新开窗口运行 terminator -l layoutname
+具体terminator的配置可以直接用src文件中的terminator文件夹下config
