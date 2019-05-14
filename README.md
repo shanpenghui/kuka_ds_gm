@@ -192,7 +192,7 @@ rosrun iiwa_ros get_all_sensor_in_one
 rosbag record -O wr_sensor_together_test_1.bag /netft_data /polaris_sensor/targets
 
 2,运行程序,回放话题，运行命令之后再次记录 
-
+rosrun iiwa_ros get_all_sensor_in_one_ApproximateTime
 
 rosbag record -O wr_sensor_together_look_1.bag /netft_data /polaris_sensor/targets /sensor_together
 
@@ -200,3 +200,14 @@ rosbag record -O wr_sensor_together_look_1.bag /netft_data /polaris_sensor/targe
 1.保存当前窗口分布，并给每个窗口输入初始命令，加 ；bash
 2.退出，关闭，新开窗口运行 terminator -l layoutname
 具体terminator的配置可以直接用src文件中的terminator文件夹下config
+
+######------------数据同步后的新阻抗辨识实验---------
+0.进行NDI标定：上传
+	1.虚拟机链接NDI，打开ros，MATLAB文件要放到MATLAB工作目录下
+	2.运行 cd src/ndi_calibrate/ 在运行 python calibrate.py 得到TJM.txt,就是旋转矩阵
+
+1.运行程序,修改其中txt名字编号
+rosrun iiwa_ros get_all_sensor_in_one_ApproximateTime
+2.mathlab程序处理数据，计算末端刚度
+   6_sensor_synchronizer中
+3.阻抗向机器人传递的程序
