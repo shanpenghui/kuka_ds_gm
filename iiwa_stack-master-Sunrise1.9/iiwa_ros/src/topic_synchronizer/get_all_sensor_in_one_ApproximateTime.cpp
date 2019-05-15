@@ -79,7 +79,7 @@ void callback(const geometry_msgs::WrenchStampedConstPtr& netft_data_msg, const 
   // sensor_pub2.publish(targets);
 
   ofstream outfile;
-  outfile.open("approximatetime_data1.txt", ios::binary | ios::app | ios::in | ios::out);
+  outfile.open("impedance_estimation_test_5_0515.txt", ios::binary | ios::app | ios::in | ios::out);
   outfile<<transformStamped.header.stamp<<"  "<<transformStamped.transform.translation.x<<"  "<<transformStamped.transform.translation.y<<"  "<<transformStamped.transform.translation.z<<"  "<<transformStamped.transform.rotation.x<<"  "<<transformStamped.transform.rotation.y<<"  "<<transformStamped.transform.rotation.z<<"\n";
   outfile.close();
 }

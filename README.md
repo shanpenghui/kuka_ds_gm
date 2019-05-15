@@ -182,7 +182,7 @@ matlab处理
 rosrun polaris_sensor polaris_sensor_node _roms:=/home/edward/8700339.rom _port:=/dev/ttyUSB0
 
 #######之后打开机器人，在运行
-rosrun iiwa_ros get_all_sensor_in_one
+rosrun iiwa_ros get_all_sensor_in_one_ApproximateTime
 
 
 
@@ -204,9 +204,9 @@ rosbag record -O wr_sensor_together_look_1.bag /netft_data /polaris_sensor/targe
 ######------------数据同步后的新阻抗辨识实验---------
 0.进行NDI标定：上传
 	1.虚拟机链接NDI，打开ros，MATLAB文件要放到MATLAB工作目录下
-	2.运行 cd src/ndi_calibrate/ 在运行 python calibrate.py 得到TJM.txt,就是旋转矩阵
-
-1.运行程序,修改其中txt名字编号
+	2.运行 cd src/ndi_calibrate/ 在运行 python calibrate.py 得到TJM.txt,就是旋转矩阵，并复制到MATLAB 6_..程序中。
+1.先关闭ndi，拔下USB，之后要先连好ati，ATI要在网页中归零，不要先运行ati命令，连好之后再连ndi，先运行NDI命令，在运行ati，不然target或者ATI不能读数。
+2.运行程序，修改其中txt名字编号
 rosrun iiwa_ros get_all_sensor_in_one_ApproximateTime
 2.mathlab程序处理数据，计算末端刚度
    6_sensor_synchronizer中
