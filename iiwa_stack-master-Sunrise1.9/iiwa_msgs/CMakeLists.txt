@@ -24,6 +24,7 @@ add_message_files(DIRECTORY msg
     JointTorque.msg
     JointVelocity.msg
     SmartServoMode.msg
+    ForceAndPosition.msg
 )
 
 add_service_files(DIRECTORY srv

@@ -1,4 +1,5 @@
 #include "ros/ros.h"
+#include "iiwaRos.h"
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -13,11 +14,13 @@
 #include <geometry_msgs/WrenchStamped.h>       
 #include <geometry_msgs/PoseArray.h>  
 #include "std_msgs/Float64.h"
+#include <iiwa_msgs/ForceAndPosition.h>
 
 using namespace std;
 using namespace message_filters;
-//tf2_ros::TransformBroadcaster tf2_broadcaster;
-geometry_msgs::TransformStamped transformStamped;
+
+// geometry_msgs::TransformStamped transformStamped;//didn't have torque and rotation
+iiwa_msgs::ForceAndPosition ForceAndPositionInExperiment;
 
 //ros::Publisher sensor_pub;
 // ros::Publisher sensor_pub1;
@@ -54,33 +57,61 @@ int main(int argc, char** argv)
 
 void callback(const geometry_msgs::WrenchStampedConstPtr& netft_data_msg, const geometry_msgs::PoseArrayConstPtr& targets)  //回调中包含多个消息
 {
+//these part is using 3 position and 3 force, while not have rotation and torque
+  // transformStamped.header.stamp = ros::Time::now();
+  // transformStamped.header.frame_id = "ts_frame";
+  // transformStamped.child_frame_id = "prism_frame";
+  // transformStamped.transform.translation.x = targets->poses[0].position.x;
+  // transformStamped.transform.translation.y = targets->poses[0].position.y;
+  // transformStamped.transform.translation.z = targets->poses[0].position.z;
+  // tf2::Quaternion q;
+  // transformStamped.transform.rotation.x = netft_data_msg->wrench.force.x;
+  // transformStamped.transform.rotation.y = netft_data_msg->wrench.force.y;
+  // transformStamped.transform.rotation.z = netft_data_msg->wrench.force.z;
+  // transformStamped.transform.rotation.w = targets->poses[0].orientation.w;
 
-  // static tf2_ros::TransformBroadcaster tf2_broadcaster;
-  // geometry_msgs::TransformStamped transformStamped;
-
-  transformStamped.header.stamp = ros::Time::now();
-  transformStamped.header.frame_id = "ts_frame";
-  transformStamped.child_frame_id = "prism_frame";
-  transformStamped.transform.translation.x = targets->poses[0].position.x;
-  transformStamped.transform.translation.y = targets->poses[0].position.y;
-  transformStamped.transform.translation.z = targets->poses[0].position.z;
-  tf2::Quaternion q;
-  transformStamped.transform.rotation.x = netft_data_msg->wrench.force.x;
-  transformStamped.transform.rotation.y = netft_data_msg->wrench.force.y;
-  transformStamped.transform.rotation.z = netft_data_msg->wrench.force.z;
-  transformStamped.transform.rotation.w = targets->poses[0].orientation.w;
+  ForceAndPositionInExperiment.wr_header.stamp = ros::Time::now();
+  ForceAndPositionInExperiment.wr_header.frame_id = "ts_frame";
+  ForceAndPositionInExperiment.wr_child_frame_id = "prism_frame";
+  ForceAndPositionInExperiment.wr_px = targets->poses[0].position.x;
+  ForceAndPositionInExperiment.wr_py = targets->poses[0].position.y;
+  ForceAndPositionInExperiment.wr_pz = targets->poses[0].position.z;
+  ForceAndPositionInExperiment.wr_pa = targets->poses[0].orientation.x;
+  ForceAndPositionInExperiment.wr_pb = targets->poses[0].orientation.y;
+  ForceAndPositionInExperiment.wr_pc = targets->poses[0].orientation.z;
+  ForceAndPositionInExperiment.wr_pw = targets->poses[0].orientation.w;
+  ForceAndPositionInExperiment.wr_fx = netft_data_msg->wrench.force.x;
+  ForceAndPositionInExperiment.wr_fy = netft_data_msg->wrench.force.y;
+  ForceAndPositionInExperiment.wr_fz = netft_data_msg->wrench.force.z;
+  ForceAndPositionInExperiment.wr_fa = netft_data_msg->wrench.torque.x;
+  ForceAndPositionInExperiment.wr_fb = netft_data_msg->wrench.torque.y;
+  ForceAndPositionInExperiment.wr_fc = netft_data_msg->wrench.torque.z;
 
   //tf2_broadcaster.sendTransform(transformStamped);
 
-  ROS_INFO("Synchronization successful [%f]", transformStamped.transform.rotation.z);//transformStamped.transform.rotation.z
+  ROS_INFO("Synchronization successful [%f]", ForceAndPositionInExperiment.wr_px);//transformStamped.transform.rotation.z
 
   //sensor_pub.publish(transformStamped);
   // sensor_pub1.publish(netft_data_msg);
   // sensor_pub2.publish(targets);
 
   ofstream outfile;
-  outfile.open("impedance_estimation_test_5_0515.txt", ios::binary | ios::app | ios::in | ios::out);
-  outfile<<transformStamped.header.stamp<<"  "<<transformStamped.transform.translation.x<<"  "<<transformStamped.transform.translation.y<<"  "<<transformStamped.transform.translation.z<<"  "<<transformStamped.transform.rotation.x<<"  "<<transformStamped.transform.rotation.y<<"  "<<transformStamped.transform.rotation.z<<"\n";
+  //name of txt: impedance_estimation_test_5_0515.txt
+  outfile.open("impedance_estimation_test_4_0516.txt", ios::binary | ios::app | ios::in | ios::out);
+  outfile<<ForceAndPositionInExperiment.wr_header.stamp<<"  "
+  <<ForceAndPositionInExperiment.wr_px<<"  "
+  <<ForceAndPositionInExperiment.wr_py<<"  "
+  <<ForceAndPositionInExperiment.wr_pz<<"  "
+  <<ForceAndPositionInExperiment.wr_pa<<"  "
+  <<ForceAndPositionInExperiment.wr_pb<<"  "
+  <<ForceAndPositionInExperiment.wr_pc<<"  "
+  <<ForceAndPositionInExperiment.wr_pw<<"  "
+  <<ForceAndPositionInExperiment.wr_fx<<"  "
+  <<ForceAndPositionInExperiment.wr_fy<<"  "
+  <<ForceAndPositionInExperiment.wr_fz<<"  "
+  <<ForceAndPositionInExperiment.wr_fa<<"  "
+  <<ForceAndPositionInExperiment.wr_fb<<"  "
+  <<ForceAndPositionInExperiment.wr_fc<<"\n";
   outfile.close();
 }
 

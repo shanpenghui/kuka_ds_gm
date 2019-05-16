@@ -1,0 +1,15 @@
+Header wr_header                                                                                                                                                                                                                                                                                                               
+string wr_child_frame_id                                                                                                                                                                                                                                                                                               
+float64 wr_px                                                                                                                                                                
+float64 wr_py                                                                                                                                                                
+float64 wr_pz                                                                                                                                                                                                                                                                                                       
+float64 wr_pa                                                                                                                                                                
+float64 wr_pb                                                                                                                                                                
+float64 wr_pc                                                                                                                                                                
+float64 wr_pw                                                                                                                                          
+float64 wr_fx                                                                                                                                                                
+float64 wr_fy                                                                                                                                                                
+float64 wr_fz                                                                                                                                      
+float64 wr_fa                                                                                                                                                                
+float64 wr_fb                                                                                                                                                                
+float64 wr_fc  
