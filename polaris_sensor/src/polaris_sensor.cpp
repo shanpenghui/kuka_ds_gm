@@ -96,6 +96,10 @@ Polaris::Polaris(const std::string port,const std::vector<std::string> roms)
         //std::cout << "Port info : " << readPortInfo(handle)<< std::endl;
     }
     std::cout << "Number of targets : " << getNumberOfTargets()<< std::endl;
+
+    //set the illuminator rate
+    setIlluminator();
+
     startTracking();
 }
 Polaris::~Polaris()
@@ -111,8 +115,8 @@ Polaris::~Polaris()
 
 std::string Polaris::readUntilCR(uint32_t timeout_ms)
 {
-    m_port.setTimeout(serial::Timeout::max(), timeout_ms, 0, timeout_ms, 0);
-    std::string result =  m_port.readline(65536,"\r");
+    m_port.setTimeout(serial::Timeout::max(), timeout_ms, 0, timeout_ms, 0);//W.R.: zero is wuxianda, try 100000  //, timeout_ms, 0, timeout_ms, 0
+    std::string result =  m_port.readline(65536,"\r");     //W.R.: readline is slow than readlines,try readlines
     removeChar(result,'\n');
     return result;
 }
@@ -280,6 +284,16 @@ void Polaris::init()
     //std::cout << "Init response : "<<answer_init << std::endl;
     if(int a = checkAnswer(answer_init) > 0)
         std::cerr << "INIT Error : " << a << std::endl;
+}
+
+void Polaris::setIlluminator()
+{
+    static const std::string cmd("SET Param.Tracking.Illuminator Rate=2 \r");
+    size_t nwrite = m_port.write(cmd);
+    std::string answer_init = readUntilCR();
+    std::cout << "Set response : "<<answer_init << std::endl;
+    if(int a = checkAnswer(answer_init) > 0)
+        std::cerr << "Set Error : " << a << std::endl;
 }
 
 std::string Polaris::requestPortHandle()

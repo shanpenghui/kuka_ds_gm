@@ -94,6 +94,11 @@ public:
     void init();
 
     /**
+     * @brief Initializes the Polaris.
+     */
+    void setIlluminator();
+
+    /**
      * @brief Clears previous port handles; Must be called after init().
      */
     void clearPortHandles();

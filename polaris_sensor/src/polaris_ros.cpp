@@ -78,8 +78,9 @@ int main(int argc, char **argv)
 
     targets_cloud.header.frame_id = "/"+camera+"_link";
     targets_pose.header.frame_id = "/"+camera+"_link";
+  //  targets_pose.header.stamp = ros::Time::now();
 
-    ros::Rate loop_rate(100);
+    ros::Rate loop_rate(100);//100
     int count = 0;
     ROS_INFO("Starting Polaris tracker loop");
     for(int i=0;i<n;++i){
@@ -91,16 +92,15 @@ int main(int argc, char **argv)
     geometry_msgs::Point32 pt;
 
     std_msgs::Float32 dt;
-    std::map<int,TransformationDataTX> targets;
+    std::map<int,TransformationDataTX> targets;    //W.R: TX is the slow way, try BX
     while (ros::ok())
     {
         /* Start TX */
         std::string status;
 
-
 	ros::Time start = ros::Time::now();
 
-	polaris.readDataTX(status,targets);
+	polaris.readDataTX(status,targets);            //W.R: TX is the slow way, try BX
 
 	ros::Time end = ros::Time::now();
 	ros::Duration duration = (end - start);
@@ -109,14 +109,20 @@ int main(int argc, char **argv)
 
         dt_pub.publish(dt);
 
-        std::map<int,TransformationDataTX>::iterator it = targets.begin();
+        std::map<int,TransformationDataTX>::iterator it = targets.begin();  
 
-        /* Start BX
+        
+
+        /* Start BX  
         uint16_t status;
         std::map<int,TransformationDataBX> targets;
         polaris.readDataBX(status,targets);
 
-        std::map<int,TransformationDataBX>::iterator it = targets.begin();*/
+        std::map<int,TransformationDataBX>::iterator it = targets.begin();
+        // ROS_INFO("Run in BX mode");
+        */
+
+
 	unsigned int i=0;
         for(it = targets.begin();it!=targets.end();++it)
         {

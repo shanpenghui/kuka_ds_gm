@@ -6,6 +6,9 @@ $ export ROS_PACKAGE_PATH=~/indigo_workspace/sandbox:$ROS_PACKAGE_PATH
 $ roscd beginner_tutorials
 source ./devel/setup.bash
 
+###查询历史命令
+Ctrl+r
+
 ##########    <----arduino,2018.3---->
 arduino
 rosrun rosserial_python serial_node.py _port:=/dev/ttyUSB0

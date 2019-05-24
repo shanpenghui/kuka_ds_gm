@@ -96,9 +96,10 @@ add_dependencies(${PROJECT_NAME}
     target_link_libraries(get_all_sensor_in_one_ApproximateTime ${catkin_LIBRARIES} )
     add_dependencies(get_all_sensor_in_one_ApproximateTime iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
 
-    add_executable(get_all_sensor_in_one_ApproximateTime_publisher src/topic_synchronizer/get_all_sensor_in_one_ApproximateTime_publisher.cpp )
-    target_link_libraries(get_all_sensor_in_one_ApproximateTime_publisher ${catkin_LIBRARIES} )
-    add_dependencies(get_all_sensor_in_one_ApproximateTime_publisher iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+    add_executable(get_all_sensor_in_one_separite_txt src/topic_synchronizer/get_all_sensor_in_one_separite_txt.cpp )
+    target_link_libraries(get_all_sensor_in_one_separite_txt ${catkin_LIBRARIES} )
+    add_dependencies(get_all_sensor_in_one_separite_txt iiwa_stack-master-Sunrise1.9_generate_messages_cpp) 
+
 
 ####src/simulate_in_gazebo
 

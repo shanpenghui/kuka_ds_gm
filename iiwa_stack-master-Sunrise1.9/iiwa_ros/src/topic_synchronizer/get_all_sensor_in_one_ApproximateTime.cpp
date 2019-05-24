@@ -97,7 +97,7 @@ void callback(const geometry_msgs::WrenchStampedConstPtr& netft_data_msg, const 
 
   ofstream outfile;
   //name of txt: impedance_estimation_test_5_0515.txt
-  outfile.open("impedance_estimation_test_4_0516.txt", ios::binary | ios::app | ios::in | ios::out);
+  outfile.open("impedance_estimation_test_1_0524.txt", ios::binary | ios::app | ios::in | ios::out);
   outfile<<ForceAndPositionInExperiment.wr_header.stamp<<"  "
   <<ForceAndPositionInExperiment.wr_px<<"  "
   <<ForceAndPositionInExperiment.wr_py<<"  "
