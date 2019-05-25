@@ -40,7 +40,7 @@ void callback_ati(const geometry_msgs::WrenchStamped& msg1)
 {
   ofstream outfile;
   //name of txt: impedance_estimation_test_5_0515.txt
-  outfile.open("1ati_separite_time_0524_1.txt", ios::binary | ios::app | ios::in | ios::out);
+  outfile.open("1ati_separite_time_0524_4.txt", ios::binary | ios::app | ios::in | ios::out);
   outfile<<msg1.header.stamp<<"  "
   <<msg1.wrench.force.x<<"  "
   <<msg1.wrench.force.y<<"  "
@@ -55,7 +55,7 @@ void callback_ndi(const geometry_msgs::PoseArray& msg2)
 {
   ofstream outfile;
   //name of txt: impedance_estimation_test_5_0515.txt
-  outfile.open("1ndi_separite_time_0524_1.txt", ios::binary | ios::app | ios::in | ios::out);
+  outfile.open("1ndi_separite_time_0524_4.txt", ios::binary | ios::app | ios::in | ios::out);
   outfile<<msg2.header.stamp<<"  "
   <<msg2.poses[0].position.x<<"  "
   <<msg2.poses[0].position.y<<"  "
